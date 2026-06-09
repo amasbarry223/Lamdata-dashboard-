@@ -18,13 +18,9 @@ export const metadata: Metadata = {
   description: "Dashboard Administrateur Lambdata - Pilotage des campagnes de collecte, modération des contributions et gestion des paiements.",
   keywords: ["Z.ai", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
   authors: [{ name: "Z.ai Team" }],
-  icons: {
-    icon: "https://z-cdn.chatglm.cn/z-ai/static/logo.svg",
-  },
   openGraph: {
     title: "Z.ai Code Scaffold",
     description: "AI-powered development with modern React stack",
-    url: "https://chat.z.ai",
     siteName: "Z.ai",
     type: "website",
   },
