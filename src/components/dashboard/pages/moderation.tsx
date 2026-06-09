@@ -1,19 +1,62 @@
 "use client";
 
-import { Search, Filter, Eye, MoreVertical, AlertTriangle, ShieldCheck, ChevronLeft, ChevronRight } from "lucide-react";
+import { useState } from "react";
+import {
+  Search,
+  Filter,
+  Eye,
+  MoreVertical,
+  AlertTriangle,
+  ShieldCheck,
+  CheckCircle2,
+  XCircle,
+  MessageSquare,
+  Clock,
+  User,
+} from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 const contributions = [
-  { id: "CONT-4872", contributor: "Fatou Ndiaye", type: "Audio", language: "Wolof", date: "Mai 15, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.65, flagReason: "Qualité audio médiocre", avatar: "FN", avatarColor: "bg-blue-100 text-blue-700" },
-  { id: "CONT-4871", contributor: "Moussa Traoré", type: "Traduction", language: "Bambara", date: "Mai 15, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.72, flagReason: "Traduction approximative", avatar: "MT", avatarColor: "bg-orange-100 text-orange-700" },
-  { id: "CONT-4870", contributor: "Aissatou Ba", type: "Image", language: "Dioula", date: "Mai 14, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.58, flagReason: "Annotation incorrecte", avatar: "AB", avatarColor: "bg-purple-100 text-purple-700" },
-  { id: "CONT-4869", contributor: "Ibrahim Coulibaly", type: "Audio", language: "Pulaar", date: "Mai 14, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.81, flagReason: "Possible triche", avatar: "IC", avatarColor: "bg-red-100 text-red-700" },
-  { id: "CONT-4868", contributor: "Mariam Sow", type: "Traduction", language: "Wolof", date: "Mai 14, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.44, flagReason: "Contenu offensant", avatar: "MS", avatarColor: "bg-pink-100 text-pink-700" },
-  { id: "CONT-4867", contributor: "Omar Diallo", type: "Audio", language: "Bambara", date: "Mai 13, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.77, flagReason: "Doublon détecté", avatar: "OD", avatarColor: "bg-green-100 text-green-700" },
-  { id: "CONT-4866", contributor: "Awa Keita", type: "Image", language: "Dioula", date: "Mai 13, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.52, flagReason: "Image floue", avatar: "AK", avatarColor: "bg-teal-100 text-teal-700" },
+  { id: "CONT-4872", contributor: "Fatou Ndiaye", type: "Audio", language: "Wolof", date: "Mai 15, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.65, flagReason: "Qualité audio médiocre", avatar: "FN", avatarColor: "bg-blue-100 text-blue-700", detail: "Enregistrement avec beaucoup de bruit de fond. La phrase est partiellement audible." },
+  { id: "CONT-4871", contributor: "Moussa Traoré", type: "Traduction", language: "Bambara", date: "Mai 15, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.72, flagReason: "Traduction approximative", avatar: "MT", avatarColor: "bg-orange-100 text-orange-700", detail: "La traduction ne capture pas complètement le sens de la phrase source." },
+  { id: "CONT-4870", contributor: "Aissatou Ba", type: "Image", language: "Dioula", date: "Mai 14, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.58, flagReason: "Annotation incorrecte", avatar: "AB", avatarColor: "bg-purple-100 text-purple-700", detail: "Les étiquettes appliquées à l'image ne correspondent pas au contenu visible." },
+  { id: "CONT-4869", contributor: "Ibrahim Coulibaly", type: "Audio", language: "Pulaar", date: "Mai 14, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.81, flagReason: "Possible triche", avatar: "IC", avatarColor: "bg-red-100 text-red-700", detail: "L'audio semble être une lecture mécanique plutôt qu'une pronunciation naturelle." },
+  { id: "CONT-4868", contributor: "Mariam Sow", type: "Traduction", language: "Wolof", date: "Mai 14, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.44, flagReason: "Contenu offensant", avatar: "MS", avatarColor: "bg-pink-100 text-pink-700", detail: "La traduction contient du langage inapproprié ou offensant." },
+  { id: "CONT-4867", contributor: "Omar Diallo", type: "Audio", language: "Bambara", date: "Mai 13, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.77, flagReason: "Doublon détecté", avatar: "OD", avatarColor: "bg-green-100 text-green-700", detail: "Cet audio semble être une copie d'une soumission précédente du même contributeur." },
+  { id: "CONT-4866", contributor: "Awa Keita", type: "Image", language: "Dioula", date: "Mai 13, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.52, flagReason: "Image floue", avatar: "AK", avatarColor: "bg-teal-100 text-teal-700", detail: "L'image est trop floue pour permettre une annotation fiable." },
 ];
 
 export default function ModerationPage() {
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [showApproveModal, setShowApproveModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [selectedContribution, setSelectedContribution] = useState<(typeof contributions)[0] | null>(null);
+
+  const openDetail = (c: (typeof contributions)[0]) => {
+    setSelectedContribution(c);
+    setShowDetailModal(true);
+  };
+
+  const openApprove = (c: (typeof contributions)[0]) => {
+    setSelectedContribution(c);
+    setShowApproveModal(true);
+  };
+
+  const openReject = (c: (typeof contributions)[0]) => {
+    setSelectedContribution(c);
+    setShowRejectModal(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -101,9 +144,9 @@ export default function ModerationPage() {
                 <td className="py-3 px-4"><span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${c.statusColor}`}>{c.status === "Signalé" && <AlertTriangle className="h-3 w-3 inline mr-0.5" />}{c.status}</span></td>
                 <td className="py-3 px-4">
                   <div className="flex items-center gap-1">
-                    <button className="px-2 py-1 text-[10px] font-medium text-red-600 border border-red-200 rounded hover:bg-red-50">Rejeter</button>
-                    <button className="px-2 py-1 text-[10px] font-medium text-white bg-emerald-500 rounded hover:bg-emerald-600">Approuver</button>
-                    <button className="p-1 rounded hover:bg-gray-100"><MoreVertical className="h-4 w-4 text-gray-400" /></button>
+                    <button className="p-1 rounded hover:bg-gray-100" onClick={() => openDetail(c)}><Eye className="h-4 w-4 text-gray-400" /></button>
+                    <button className="px-2 py-1 text-[10px] font-medium text-red-600 border border-red-200 rounded hover:bg-red-50" onClick={() => openReject(c)}>Rejeter</button>
+                    <button className="px-2 py-1 text-[10px] font-medium text-white bg-emerald-500 rounded hover:bg-emerald-600" onClick={() => openApprove(c)}>Approuver</button>
                   </div>
                 </td>
               </tr>
@@ -111,6 +154,146 @@ export default function ModerationPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Modal: Détails Contribution */}
+      <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
+        <DialogContent className="sm:max-w-xl">
+          {selectedContribution && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center justify-between">
+                  <DialogTitle>Détails de la Contribution</DialogTitle>
+                  <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${selectedContribution.statusColor}`}>
+                    {selectedContribution.status}
+                  </span>
+                </div>
+                <DialogDescription>{selectedContribution.id}</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="flex items-center gap-3">
+                  <Avatar className="h-10 w-10"><AvatarFallback className={`${selectedContribution.avatarColor} text-xs font-semibold`}>{selectedContribution.avatar}</AvatarFallback></Avatar>
+                  <div>
+                    <p className="text-sm font-semibold text-gray-800">{selectedContribution.contributor}</p>
+                    <p className="text-xs text-gray-500">{selectedContribution.date}</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-blue-50 rounded-lg p-3 text-center">
+                    <p className="text-sm font-bold text-blue-700">{selectedContribution.type}</p>
+                    <p className="text-[10px] text-blue-600">Type</p>
+                  </div>
+                  <div className="bg-emerald-50 rounded-lg p-3 text-center">
+                    <p className="text-sm font-bold text-emerald-700">{selectedContribution.language}</p>
+                    <p className="text-[10px] text-emerald-600">Langue</p>
+                  </div>
+                  <div className={`${selectedContribution.score >= 0.8 ? "bg-emerald-50" : selectedContribution.score >= 0.6 ? "bg-yellow-50" : "bg-red-50"} rounded-lg p-3 text-center`}>
+                    <p className={`text-sm font-bold ${selectedContribution.score >= 0.8 ? "text-emerald-700" : selectedContribution.score >= 0.6 ? "text-yellow-700" : "text-red-700"}`}>{selectedContribution.score.toFixed(2)}</p>
+                    <p className="text-[10px] text-gray-600">Score Qualité</p>
+                  </div>
+                </div>
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <div className="flex items-center gap-2 mb-1">
+                    <AlertTriangle className="h-4 w-4 text-red-500" />
+                    <p className="text-xs font-semibold text-red-700">Motif du Signalement</p>
+                  </div>
+                  <p className="text-sm text-red-800">{selectedContribution.flagReason}</p>
+                </div>
+                <div className="bg-gray-50 border border-gray-100 rounded-lg p-3">
+                  <p className="text-xs font-semibold text-gray-500 mb-1">Description</p>
+                  <p className="text-sm text-gray-700">{selectedContribution.detail}</p>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowDetailModal(false)}>Fermer</Button>
+                <Button className="bg-red-500 hover:bg-red-600 text-white gap-1.5" onClick={() => { setShowDetailModal(false); openReject(selectedContribution); }}>
+                  <XCircle className="h-4 w-4" /> Rejeter
+                </Button>
+                <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={() => { setShowDetailModal(false); openApprove(selectedContribution); }}>
+                  <CheckCircle2 className="h-4 w-4" /> Approuver
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal: Approuver */}
+      <Dialog open={showApproveModal} onOpenChange={setShowApproveModal}>
+        <DialogContent className="sm:max-w-md">
+          {selectedContribution && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                  <DialogTitle>Approuver la Contribution</DialogTitle>
+                </div>
+                <DialogDescription>Confirmez l&apos;approbation de {selectedContribution.id}</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center">
+                  <CheckCircle2 className="h-8 w-8 text-emerald-600 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-emerald-800">Cette contribution sera validée</p>
+                  <p className="text-xs text-emerald-600 mt-1">Le contributeur recevra sa récompense</p>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Commentaire (optionnel)</label>
+                  <Textarea rows={3} placeholder="Ajoutez un commentaire pour le contributeur..." className="resize-none" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowApproveModal(false)}>Annuler</Button>
+                <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={() => setShowApproveModal(false)}>
+                  <CheckCircle2 className="h-4 w-4" /> Confirmer l&apos;Approbation
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal: Rejeter */}
+      <Dialog open={showRejectModal} onOpenChange={setShowRejectModal}>
+        <DialogContent className="sm:max-w-md">
+          {selectedContribution && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-2">
+                  <XCircle className="h-5 w-5 text-red-500" />
+                  <DialogTitle>Rejeter la Contribution</DialogTitle>
+                </div>
+                <DialogDescription>Confirmez le rejet de {selectedContribution.id}</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                  <XCircle className="h-8 w-8 text-red-500 mx-auto mb-2" />
+                  <p className="text-sm font-medium text-red-800">Cette contribution sera rejetée</p>
+                  <p className="text-xs text-red-600 mt-1">Aucune récompense ne sera versée</p>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Raison du Rejet</label>
+                  <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <option>Qualité insuffisante</option>
+                    <option>Contenu inapproprié</option>
+                    <option>Doublon détecté</option>
+                    <option>Triche / Fraude</option>
+                    <option>Autre</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Commentaire pour le contributeur</label>
+                  <Textarea rows={3} placeholder="Expliquez pourquoi cette contribution est rejetée..." className="resize-none" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowRejectModal(false)}>Annuler</Button>
+                <Button className="bg-red-500 hover:bg-red-600 text-white gap-1.5" onClick={() => setShowRejectModal(false)}>
+                  <XCircle className="h-4 w-4" /> Confirmer le Rejet
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

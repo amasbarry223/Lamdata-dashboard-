@@ -1,17 +1,38 @@
 "use client";
 
-import { Wallet, Search, Filter, Eye, MoreVertical, CheckCircle2, XCircle, Clock, Download } from "lucide-react";
+import { useState } from "react";
+import {
+  Wallet,
+  Search,
+  Filter,
+  Eye,
+  CheckCircle2,
+  XCircle,
+  Clock,
+  Download,
+  Phone,
+  AlertTriangle,
+} from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 const payments = [
-  { id: "PAY-0189", name: "Fatou Ndiaye", amount: "15,000 XOF", operator: "Wave", phone: "+221 77 123 4567", date: "Mai 15, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 3, avatar: "FN", avatarColor: "bg-blue-100 text-blue-700" },
-  { id: "PAY-0188", name: "Moussa Traoré", amount: "8,500 XOF", operator: "Orange Money", phone: "+223 76 987 6543", date: "Mai 15, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 2, avatar: "MT", avatarColor: "bg-orange-100 text-orange-700" },
-  { id: "PAY-0187", name: "Aissatou Ba", amount: "22,000 XOF", operator: "MTN", phone: "+225 07 456 7890", date: "Mai 14, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 4, avatar: "AB", avatarColor: "bg-purple-100 text-purple-700" },
-  { id: "PAY-0186", name: "Ibrahim Coulibaly", amount: "3,200 XOF", operator: "Free Money", phone: "+221 78 111 2222", date: "Mai 14, 2024", status: "Rejeté", statusColor: "bg-red-100 text-red-700", level: 1, avatar: "IC", avatarColor: "bg-red-100 text-red-700", rejectReason: "Fraude détectée" },
-  { id: "PAY-0185", name: "Mariam Sow", amount: "12,750 XOF", operator: "Wave", phone: "+221 76 333 4444", date: "Mai 14, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 3, avatar: "MS", avatarColor: "bg-pink-100 text-pink-700" },
-  { id: "PAY-0184", name: "Omar Diallo", amount: "6,000 XOF", operator: "Orange Money", phone: "+223 75 555 6666", date: "Mai 13, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 2, avatar: "OD", avatarColor: "bg-green-100 text-green-700" },
-  { id: "PAY-0183", name: "Awa Keita", amount: "35,000 XOF", operator: "MTN", phone: "+225 05 777 8888", date: "Mai 13, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 5, avatar: "AK", avatarColor: "bg-teal-100 text-teal-700" },
+  { id: "PAY-0189", name: "Fatou Ndiaye", amount: "15,000 XOF", amountNum: 15000, operator: "Wave", phone: "+221 77 123 4567", date: "Mai 15, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 3, avatar: "FN", avatarColor: "bg-blue-100 text-blue-700" },
+  { id: "PAY-0188", name: "Moussa Traoré", amount: "8,500 XOF", amountNum: 8500, operator: "Orange Money", phone: "+223 76 987 6543", date: "Mai 15, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 2, avatar: "MT", avatarColor: "bg-orange-100 text-orange-700" },
+  { id: "PAY-0187", name: "Aissatou Ba", amount: "22,000 XOF", amountNum: 22000, operator: "MTN", phone: "+225 07 456 7890", date: "Mai 14, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 4, avatar: "AB", avatarColor: "bg-purple-100 text-purple-700" },
+  { id: "PAY-0186", name: "Ibrahim Coulibaly", amount: "3,200 XOF", amountNum: 3200, operator: "Free Money", phone: "+221 78 111 2222", date: "Mai 14, 2024", status: "Rejeté", statusColor: "bg-red-100 text-red-700", level: 1, avatar: "IC", avatarColor: "bg-red-100 text-red-700", rejectReason: "Fraude détectée" },
+  { id: "PAY-0185", name: "Mariam Sow", amount: "12,750 XOF", amountNum: 12750, operator: "Wave", phone: "+221 76 333 4444", date: "Mai 14, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 3, avatar: "MS", avatarColor: "bg-pink-100 text-pink-700" },
+  { id: "PAY-0184", name: "Omar Diallo", amount: "6,000 XOF", amountNum: 6000, operator: "Orange Money", phone: "+223 75 555 6666", date: "Mai 13, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 2, avatar: "OD", avatarColor: "bg-green-100 text-green-700" },
+  { id: "PAY-0183", name: "Awa Keita", amount: "35,000 XOF", amountNum: 35000, operator: "MTN", phone: "+225 05 777 8888", date: "Mai 13, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 5, avatar: "AK", avatarColor: "bg-teal-100 text-teal-700" },
 ];
 
 const statusIcon: Record<string, typeof Clock> = {
@@ -21,6 +42,26 @@ const statusIcon: Record<string, typeof Clock> = {
 };
 
 export default function PaiementsPage() {
+  const [showValidateModal, setShowValidateModal] = useState(false);
+  const [showRejectModal, setShowRejectModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedPayment, setSelectedPayment] = useState<(typeof payments)[0] | null>(null);
+
+  const openValidate = (p: (typeof payments)[0]) => {
+    setSelectedPayment(p);
+    setShowValidateModal(true);
+  };
+
+  const openReject = (p: (typeof payments)[0]) => {
+    setSelectedPayment(p);
+    setShowRejectModal(true);
+  };
+
+  const openDetail = (p: (typeof payments)[0]) => {
+    setSelectedPayment(p);
+    setShowDetailModal(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
@@ -109,13 +150,12 @@ export default function PaiementsPage() {
                   <td className="py-3 px-4">
                     {p.status === "En Attente" ? (
                       <div className="flex items-center gap-1">
-                        <button className="px-2 py-1 text-[10px] font-medium text-red-600 border border-red-200 rounded hover:bg-red-50">Rejeter</button>
-                        <button className="px-2 py-1 text-[10px] font-medium text-white bg-emerald-500 rounded hover:bg-emerald-600">Valider</button>
+                        <button className="px-2 py-1 text-[10px] font-medium text-red-600 border border-red-200 rounded hover:bg-red-50" onClick={() => openReject(p)}>Rejeter</button>
+                        <button className="px-2 py-1 text-[10px] font-medium text-white bg-emerald-500 rounded hover:bg-emerald-600" onClick={() => openValidate(p)}>Valider</button>
                       </div>
                     ) : (
                       <div className="flex items-center gap-1">
-                        <button className="p-1 rounded hover:bg-gray-100"><Eye className="h-4 w-4 text-gray-400" /></button>
-                        <button className="p-1 rounded hover:bg-gray-100"><MoreVertical className="h-4 w-4 text-gray-400" /></button>
+                        <button className="p-1 rounded hover:bg-gray-100" onClick={() => openDetail(p)}><Eye className="h-4 w-4 text-gray-400" /></button>
                       </div>
                     )}
                   </td>
@@ -125,6 +165,162 @@ export default function PaiementsPage() {
           </tbody>
         </table>
       </div>
+
+      {/* Modal: Valider Paiement */}
+      <Dialog open={showValidateModal} onOpenChange={setShowValidateModal}>
+        <DialogContent className="sm:max-w-md">
+          {selectedPayment && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-2">
+                  <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+                  <DialogTitle>Valider le Paiement</DialogTitle>
+                </div>
+                <DialogDescription>Confirmez le paiement de {selectedPayment.id}</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center">
+                  <p className="text-2xl font-bold text-emerald-700">{selectedPayment.amount}</p>
+                  <p className="text-sm text-emerald-600 mt-1">sera envoyé à {selectedPayment.name}</p>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3 border border-gray-100 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Bénéficiaire</span>
+                    <span className="font-medium">{selectedPayment.name}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Opérateur</span>
+                    <span className="font-medium">{selectedPayment.operator}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Téléphone</span>
+                    <span className="font-mono font-medium">{selectedPayment.phone}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Niveau</span>
+                    <span className="font-medium">Niveau {selectedPayment.level}</span>
+                  </div>
+                </div>
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                  <div className="flex items-start gap-2">
+                    <AlertTriangle className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                    <p className="text-xs text-amber-700">Vérifiez que le numéro de téléphone est correct avant de confirmer. Le paiement est irréversible.</p>
+                  </div>
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowValidateModal(false)}>Annuler</Button>
+                <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={() => setShowValidateModal(false)}>
+                  <CheckCircle2 className="h-4 w-4" /> Confirmer le Paiement
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal: Rejeter Paiement */}
+      <Dialog open={showRejectModal} onOpenChange={setShowRejectModal}>
+        <DialogContent className="sm:max-w-md">
+          {selectedPayment && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center gap-2">
+                  <XCircle className="h-5 w-5 text-red-500" />
+                  <DialogTitle>Rejeter le Paiement</DialogTitle>
+                </div>
+                <DialogDescription>Rejeter la demande de {selectedPayment.id}</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-center">
+                  <p className="text-2xl font-bold text-red-700">{selectedPayment.amount}</p>
+                  <p className="text-sm text-red-600 mt-1">ne sera pas envoyé à {selectedPayment.name}</p>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Raison du Rejet</label>
+                  <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                    <option>Compte Mobile Money invalide</option>
+                    <option>Fraude détectée</option>
+                    <option>Montant incorrect</option>
+                    <option>Doublon de demande</option>
+                    <option>Autre</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Commentaire</label>
+                  <Textarea rows={3} placeholder="Expliquez la raison du rejet au contributeur..." className="resize-none" />
+                </div>
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowRejectModal(false)}>Annuler</Button>
+                <Button className="bg-red-500 hover:bg-red-600 text-white gap-1.5" onClick={() => setShowRejectModal(false)}>
+                  <XCircle className="h-4 w-4" /> Confirmer le Rejet
+                </Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal: Détails Paiement */}
+      <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
+        <DialogContent className="sm:max-w-lg">
+          {selectedPayment && (() => {
+            const Icon = statusIcon[selectedPayment.status] || Clock;
+            return (
+              <>
+                <DialogHeader>
+                  <div className="flex items-center justify-between">
+                    <DialogTitle>Détails du Paiement</DialogTitle>
+                    <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${selectedPayment.statusColor} inline-flex items-center gap-1`}>
+                      <Icon className="h-3 w-3" /> {selectedPayment.status}
+                    </span>
+                  </div>
+                  <DialogDescription>{selectedPayment.id}</DialogDescription>
+                </DialogHeader>
+                <div className="space-y-4 py-2">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="h-12 w-12"><AvatarFallback className={`${selectedPayment.avatarColor} text-sm font-semibold`}>{selectedPayment.avatar}</AvatarFallback></Avatar>
+                    <div>
+                      <p className="text-base font-bold text-gray-800">{selectedPayment.name}</p>
+                      <p className="text-xs text-gray-500">Contributeur Niveau {selectedPayment.level}</p>
+                    </div>
+                  </div>
+                  <div className="text-center bg-gray-50 rounded-lg p-4 border border-gray-100">
+                    <p className="text-3xl font-bold text-gray-800">{selectedPayment.amount}</p>
+                    <p className="text-xs text-gray-500 mt-1">Montant de la Demande</p>
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="flex items-center gap-2 text-sm">
+                      <Wallet className="h-4 w-4 text-gray-400" />
+                      <span className="text-gray-500">Opérateur :</span>
+                      <span className="font-medium">{selectedPayment.operator}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Phone className="h-4 w-4 text-gray-400" />
+                      <span className="text-gray-500">Tél :</span>
+                      <span className="font-mono font-medium">{selectedPayment.phone}</span>
+                    </div>
+                    <div className="flex items-center gap-2 text-sm">
+                      <Clock className="h-4 w-4 text-gray-400" />
+                      <span className="text-gray-500">Date :</span>
+                      <span className="font-medium">{selectedPayment.date}</span>
+                    </div>
+                  </div>
+                  {"rejectReason" in selectedPayment && selectedPayment.rejectReason && (
+                    <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                      <p className="text-xs font-semibold text-red-700">Raison du rejet : {selectedPayment.rejectReason}</p>
+                    </div>
+                  )}
+                </div>
+                <DialogFooter>
+                  <Button variant="outline" onClick={() => setShowDetailModal(false)}>Fermer</Button>
+                </DialogFooter>
+              </>
+            );
+          })()}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

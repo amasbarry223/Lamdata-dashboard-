@@ -1,16 +1,49 @@
 "use client";
 
-import { Download, FileJson, FileArchive, FileSpreadsheet, Filter, Play, Settings2 } from "lucide-react";
+import { useState } from "react";
+import {
+  Download,
+  FileJson,
+  FileArchive,
+  FileSpreadsheet,
+  Play,
+  Settings2,
+  CheckCircle2,
+  XCircle,
+  Loader2,
+  Eye,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 
 const recentExports = [
-  { id: "EXP-012", type: "Audio", format: "ZIP + JSON", language: "Wolof", records: 12840, score: "> 0.8", date: "Mai 14, 2024", size: "2.4 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700" },
-  { id: "EXP-011", type: "Traduction", format: "CSV", language: "Bambara", records: 9650, score: "> 0.7", date: "Mai 12, 2024", size: "45 MB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700" },
-  { id: "EXP-010", type: "Image", format: "ZIP + JSON", language: "Dioula", records: 7230, score: "> 0.75", date: "Mai 10, 2024", size: "5.1 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700" },
-  { id: "EXP-009", type: "Audio", format: "ZIP + JSON", language: "Pulaar", records: 5890, score: "> 0.8", date: "Mai 08, 2024", size: "1.8 GB", status: "Échoué", statusColor: "bg-red-100 text-red-700" },
+  { id: "EXP-012", type: "Audio", format: "ZIP + JSON", language: "Wolof", records: 12840, score: "> 0.8", date: "Mai 14, 2024", size: "2.4 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "12 min" },
+  { id: "EXP-011", type: "Traduction", format: "CSV", language: "Bambara", records: 9650, score: "> 0.7", date: "Mai 12, 2024", size: "45 MB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "3 min" },
+  { id: "EXP-010", type: "Image", format: "ZIP + JSON", language: "Dioula", records: 7230, score: "> 0.75", date: "Mai 10, 2024", size: "5.1 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "25 min" },
+  { id: "EXP-009", type: "Audio", format: "ZIP + JSON", language: "Pulaar", records: 5890, score: "> 0.8", date: "Mai 08, 2024", size: "1.8 GB", status: "Échoué", statusColor: "bg-red-100 text-red-700", duration: "—", error: "Espace disque insuffisant" },
 ];
 
 export default function ExportPage() {
+  const [showExportModal, setShowExportModal] = useState(false);
+  const [showDetailModal, setShowDetailModal] = useState(false);
+  const [selectedExport, setSelectedExport] = useState<(typeof recentExports)[0] | null>(null);
+
+  const openDetail = (e: (typeof recentExports)[0]) => {
+    setSelectedExport(e);
+    setShowDetailModal(true);
+  };
+
+  const startExport = () => {
+    setShowExportModal(true);
+  };
+
   return (
     <div className="space-y-6">
       <div className="flex items-center gap-3">
@@ -29,51 +62,32 @@ export default function ExportPage() {
         </div>
 
         <div className="grid grid-cols-4 gap-4 mb-6">
-          {/* Type */}
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Type de Contribution</label>
             <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-              <option>Tous les Types</option>
-              <option>Audio</option>
-              <option>Traduction</option>
-              <option>Image</option>
+              <option>Tous les Types</option><option>Audio</option><option>Traduction</option><option>Image</option>
             </select>
           </div>
-          {/* Language */}
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Langue Cible</label>
             <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-              <option>Toutes les Langues</option>
-              <option>Wolof</option>
-              <option>Bambara</option>
-              <option>Dioula</option>
-              <option>Pulaar</option>
+              <option>Toutes les Langues</option><option>Wolof</option><option>Bambara</option><option>Dioula</option><option>Pulaar</option>
             </select>
           </div>
-          {/* Score */}
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Score Qualité Min.</label>
             <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-              <option>{"> 0.5"}</option>
-              <option>{"> 0.6"}</option>
-              <option>{"> 0.7"}</option>
-              <option>{"> 0.8"}</option>
-              <option>{"> 0.9"}</option>
+              <option>{"> 0.5"}</option><option>{"> 0.6"}</option><option>{"> 0.7"}</option><option>{"> 0.8"}</option><option>{"> 0.9"}</option>
             </select>
           </div>
-          {/* Format */}
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Format d&apos;Export</label>
             <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-              <option>Auto (recommandé)</option>
-              <option>CSV</option>
-              <option>JSON</option>
-              <option>ZIP + JSON</option>
+              <option>Auto (recommandé)</option><option>CSV</option><option>JSON</option><option>ZIP + JSON</option>
             </select>
           </div>
         </div>
 
-        {/* Format Info */}
         <div className="grid grid-cols-3 gap-3 mb-6">
           <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <div className="flex items-center gap-2 mb-1.5">
@@ -102,7 +116,7 @@ export default function ExportPage() {
           <div className="text-xs text-gray-500">
             <span className="font-semibold text-gray-700">38,730</span> contributions éligibles après filtrage
           </div>
-          <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2">
+          <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2" onClick={startExport}>
             <Play className="h-4 w-4" /> Lancer l&apos;Export
           </Button>
         </div>
@@ -124,6 +138,7 @@ export default function ExportPage() {
                 <th className="text-left py-2.5 px-3 text-xs font-semibold text-gray-500 uppercase">Date</th>
                 <th className="text-right py-2.5 px-3 text-xs font-semibold text-gray-500 uppercase">Taille</th>
                 <th className="text-left py-2.5 px-3 text-xs font-semibold text-gray-500 uppercase">Statut</th>
+                <th className="text-left py-2.5 px-3 text-xs font-semibold text-gray-500 uppercase"></th>
               </tr>
             </thead>
             <tbody>
@@ -138,12 +153,144 @@ export default function ExportPage() {
                   <td className="py-3 px-3 text-sm text-gray-500">{e.date}</td>
                   <td className="py-3 px-3 text-right text-sm text-gray-700 font-medium">{e.size}</td>
                   <td className="py-3 px-3"><span className={`text-[10px] font-semibold px-2 py-0.5 rounded-full ${e.statusColor}`}>{e.status}</span></td>
+                  <td className="py-3 px-3">
+                    <button className="p-1 rounded hover:bg-gray-100" onClick={() => openDetail(e)}><Eye className="h-4 w-4 text-gray-400" /></button>
+                  </td>
                 </tr>
               ))}
             </tbody>
           </table>
         </div>
       </div>
+
+      {/* Modal: Confirmation Export */}
+      <Dialog open={showExportModal} onOpenChange={setShowExportModal}>
+        <DialogContent className="sm:max-w-lg">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <Download className="h-5 w-5 text-emerald-600" />
+              <DialogTitle>Confirmer l&apos;Export</DialogTitle>
+            </div>
+            <DialogDescription>Vérifiez les paramètres avant de lancer l&apos;export</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 space-y-2.5">
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Type</span>
+                <span className="font-medium text-gray-800">Tous les Types</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Langue</span>
+                <span className="font-medium text-gray-800">Toutes les Langues</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Score Minimum</span>
+                <span className="font-medium text-gray-800">&gt; 0.5</span>
+              </div>
+              <div className="flex justify-between text-sm">
+                <span className="text-gray-500">Format</span>
+                <span className="font-medium text-gray-800">Auto (recommandé)</span>
+              </div>
+              <div className="border-t border-gray-200 pt-2.5 flex justify-between text-sm">
+                <span className="font-semibold text-gray-700">Contributions éligibles</span>
+                <span className="font-bold text-emerald-600">38,730</span>
+              </div>
+            </div>
+            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+              <div className="flex items-start gap-2">
+                <Loader2 className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
+                <div>
+                  <p className="text-xs font-semibold text-amber-700">Durée estimée</p>
+                  <p className="text-xs text-amber-600">L&apos;export peut prendre entre 5 et 30 minutes selon le volume. Vous recevrez une notification à la fin.</p>
+                </div>
+              </div>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Nom de l&apos;Export</label>
+              <input defaultValue="lambdata-export-2024-05" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowExportModal(false)}>Annuler</Button>
+            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={() => setShowExportModal(false)}>
+              <Play className="h-4 w-4" /> Lancer l&apos;Export
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal: Détails Export */}
+      <Dialog open={showDetailModal} onOpenChange={setShowDetailModal}>
+        <DialogContent className="sm:max-w-lg">
+          {selectedExport && (
+            <>
+              <DialogHeader>
+                <div className="flex items-center justify-between">
+                  <DialogTitle>Détails de l&apos;Export</DialogTitle>
+                  <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${selectedExport.statusColor}`}>
+                    {selectedExport.status}
+                  </span>
+                </div>
+                <DialogDescription>{selectedExport.id}</DialogDescription>
+              </DialogHeader>
+              <div className="space-y-4 py-2">
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-blue-50 rounded-lg p-3 text-center">
+                    <p className="text-sm font-bold text-blue-700">{selectedExport.type}</p>
+                    <p className="text-[10px] text-blue-600">Type</p>
+                  </div>
+                  <div className="bg-emerald-50 rounded-lg p-3 text-center">
+                    <p className="text-sm font-bold text-emerald-700">{selectedExport.language}</p>
+                    <p className="text-[10px] text-emerald-600">Langue</p>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-3 text-center">
+                    <p className="text-sm font-bold text-purple-700">{selectedExport.format}</p>
+                    <p className="text-[10px] text-purple-600">Format</p>
+                  </div>
+                </div>
+                <div className="bg-gray-50 rounded-lg p-3 border border-gray-100 space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Enregistrements</span>
+                    <span className="font-semibold">{selectedExport.records.toLocaleString()}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Score Minimum</span>
+                    <span className="font-medium">{selectedExport.score}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Taille</span>
+                    <span className="font-semibold">{selectedExport.size}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Durée</span>
+                    <span className="font-medium">{selectedExport.duration}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-500">Date</span>
+                    <span className="font-medium">{selectedExport.date}</span>
+                  </div>
+                </div>
+                {"error" in selectedExport && selectedExport.error && (
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                    <div className="flex items-center gap-2">
+                      <XCircle className="h-4 w-4 text-red-500" />
+                      <p className="text-xs font-semibold text-red-700">Erreur : {selectedExport.error}</p>
+                    </div>
+                  </div>
+                )}
+                {selectedExport.status === "Terminé" && (
+                  <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white gap-2">
+                    <Download className="h-4 w-4" /> Télécharger le Fichier
+                  </Button>
+                )}
+              </div>
+              <DialogFooter>
+                <Button variant="outline" onClick={() => setShowDetailModal(false)}>Fermer</Button>
+              </DialogFooter>
+            </>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

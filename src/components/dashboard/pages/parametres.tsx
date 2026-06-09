@@ -1,16 +1,50 @@
 "use client";
 
-import { Settings, Globe, Bell, ShieldCheck, Database, Mail, Save } from "lucide-react";
+import { useState } from "react";
+import {
+  Settings,
+  Globe,
+  Bell,
+  ShieldCheck,
+  Database,
+  Mail,
+  Save,
+  User,
+  Lock,
+  CheckCircle2,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Textarea } from "@/components/ui/textarea";
 
 export default function ParametresPage() {
+  const [showSaveModal, setShowSaveModal] = useState(false);
+  const [showPasswordModal, setShowPasswordModal] = useState(false);
+
   return (
     <div className="space-y-6">
-      <div className="flex items-center gap-3">
-        <Settings className="h-6 w-6 text-emerald-600" />
-        <div>
-          <h2 className="text-xl font-semibold text-gray-800">Paramètres</h2>
-          <p className="text-sm text-gray-500 mt-1">Configurez les préférences de la plateforme</p>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center gap-3">
+          <Settings className="h-6 w-6 text-emerald-600" />
+          <div>
+            <h2 className="text-xl font-semibold text-gray-800">Paramètres</h2>
+            <p className="text-sm text-gray-500 mt-1">Configurez les préférences de la plateforme</p>
+          </div>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" className="gap-2 text-gray-600" onClick={() => setShowPasswordModal(true)}>
+            <Lock className="h-4 w-4" /> Changer le Mot de Passe
+          </Button>
+          <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2" onClick={() => setShowSaveModal(true)}>
+            <Save className="h-4 w-4" /> Enregistrer
+          </Button>
         </div>
       </div>
 
@@ -32,8 +66,7 @@ export default function ParametresPage() {
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Langue par Défaut</label>
                   <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    <option>Français</option>
-                    <option>English</option>
+                    <option>Français</option><option>English</option>
                   </select>
                 </div>
               </div>
@@ -41,9 +74,7 @@ export default function ParametresPage() {
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Fuseau Horaire</label>
                   <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                    <option>Africa/Dakar (GMT+0)</option>
-                    <option>Africa/Bamako (GMT+0)</option>
-                    <option>Africa/Abidjan (GMT+0)</option>
+                    <option>Africa/Dakar (GMT+0)</option><option>Africa/Bamako (GMT+0)</option><option>Africa/Abidjan (GMT+0)</option>
                   </select>
                 </div>
                 <div>
@@ -63,7 +94,7 @@ export default function ParametresPage() {
             <div className="space-y-3">
               {[
                 { label: "Nouvelles demandes de paiement", desc: "Recevoir une alerte quand un contributeur demande un retrait", checked: true },
-                { label: "Contributions signalées", desc: "Notification lorsqu&apos;une contribution est marquée comme signalée", checked: true },
+                { label: "Contributions signalées", desc: "Notification lorsqu'une contribution est marquée comme signalée", checked: true },
                 { label: "Export terminé", desc: "Alerter quand un export de corpus est prêt", checked: true },
                 { label: "Rapport hebdomadaire", desc: "Recevoir un récapitulatif chaque lundi", checked: false },
               ].map((n) => (
@@ -118,6 +149,33 @@ export default function ParametresPage() {
 
         {/* Right column */}
         <div className="space-y-6">
+          {/* Profile */}
+          <div className="bg-white border border-gray-200 rounded-xl p-5">
+            <div className="flex items-center gap-2 mb-4">
+              <User className="h-4 w-4 text-emerald-600" />
+              <h3 className="text-base font-semibold text-gray-800">Profil Admin</h3>
+            </div>
+            <div className="flex items-center gap-3 mb-4">
+              <div className="h-12 w-12 bg-emerald-100 rounded-full flex items-center justify-center">
+                <span className="text-emerald-700 font-bold">AD</span>
+              </div>
+              <div>
+                <p className="text-sm font-semibold text-gray-800">Amadou Diallo</p>
+                <p className="text-xs text-gray-500">admin@lambdata.ai</p>
+              </div>
+            </div>
+            <div className="space-y-3">
+              <div>
+                <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Nom Complet</label>
+                <input defaultValue="Amadou Diallo" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              </div>
+              <div>
+                <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Email</label>
+                <input defaultValue="admin@lambdata.ai" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              </div>
+            </div>
+          </div>
+
           {/* Data */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-4">
@@ -166,11 +224,76 @@ export default function ParametresPage() {
           </div>
 
           {/* Save */}
-          <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white gap-2">
+          <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white gap-2" onClick={() => setShowSaveModal(true)}>
             <Save className="h-4 w-4" /> Enregistrer les Modifications
           </Button>
         </div>
       </div>
+
+      {/* Modal: Confirmation Sauvegarde */}
+      <Dialog open={showSaveModal} onOpenChange={setShowSaveModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <CheckCircle2 className="h-5 w-5 text-emerald-600" />
+              <DialogTitle>Confirmer les Modifications</DialogTitle>
+            </div>
+            <DialogDescription>Voulez-vous enregistrer ces changements ?</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-lg p-4 text-center">
+              <CheckCircle2 className="h-10 w-10 text-emerald-600 mx-auto mb-2" />
+              <p className="text-sm font-medium text-emerald-800">Les paramètres suivants seront mis à jour :</p>
+              <ul className="text-xs text-emerald-600 mt-2 space-y-1 text-left max-w-xs mx-auto">
+                <li>• Paramètres généraux (nom, langue, fuseau)</li>
+                <li>• Préférences de notification</li>
+                <li>• Seuils de sécurité et modération</li>
+                <li>• Informations de contact</li>
+              </ul>
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowSaveModal(false)}>Annuler</Button>
+            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={() => setShowSaveModal(false)}>
+              <Save className="h-4 w-4" /> Enregistrer
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Modal: Changer Mot de Passe */}
+      <Dialog open={showPasswordModal} onOpenChange={setShowPasswordModal}>
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <div className="flex items-center gap-2">
+              <Lock className="h-5 w-5 text-emerald-600" />
+              <DialogTitle>Changer le Mot de Passe</DialogTitle>
+            </div>
+            <DialogDescription>Mettez à jour votre mot de passe administrateur</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-2">
+            <div>
+              <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Mot de Passe Actuel</label>
+              <input type="password" placeholder="••••••••" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Nouveau Mot de Passe</label>
+              <input type="password" placeholder="••••••••" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              <p className="text-[10px] text-gray-400 mt-1">Minimum 8 caractères, 1 majuscule, 1 chiffre</p>
+            </div>
+            <div>
+              <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Confirmer le Mot de Passe</label>
+              <input type="password" placeholder="••••••••" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={() => setShowPasswordModal(false)}>Annuler</Button>
+            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={() => setShowPasswordModal(false)}>
+              <Lock className="h-4 w-4" /> Mettre à Jour
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

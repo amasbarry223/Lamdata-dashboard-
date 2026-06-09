@@ -77,3 +77,34 @@ Stage Summary:
 - Full SPA navigation with Zustand state management
 - French localization on every page
 - No lint errors, no runtime errors
+
+---
+Task ID: 4
+Agent: main
+Task: Add centered modals to all pages for action buttons (create, edit, delete, approve, reject, etc.)
+
+Work Log:
+- Reviewed all 9 existing page components to identify action buttons that need modals
+- Leveraged existing shadcn/ui Dialog component (dialog.tsx) for centered modals
+- Fixed DialogContent overflow: added max-h-[90vh] overflow-y-auto to handle tall modals
+- Rewrote Campagnes page: "Nouvelle Campagne" create modal + "Détails" campaign detail modal
+- Rewrote Phrases page: "Ajouter Phrase" form modal + "Importer CSV/JSON" import modal + "Détails" phrase detail modal
+- Rewrote Images page: "Ajouter Image" upload modal + "Configurer" labeling questions modal + "Détails" image detail modal
+- Rewrote Modération page: "Approuver" confirmation modal + "Rejeter" with reason modal + "Détails" contribution detail modal
+- Rewrote Consensus page: "Détails" vote details modal + "Arbitrer" split vote decision modal
+- Rewrote Récompenses page: "Détails" contributor profile modal + "Configurer les Récompenses" reward settings modal
+- Rewrote Paiements page: "Valider" payment confirmation modal + "Rejeter" with reason modal + "Détails" payment detail modal
+- Rewrote Export page: "Lancer l'Export" confirmation modal + "Détails" export detail modal
+- Rewrote Paramètres page: "Enregistrer" save confirmation modal + "Changer le Mot de Passe" modal
+- All modals are centered with dark backdrop (bg-black/50), use emerald theme, close via X/backdrop/Escape
+- Verified all modals via Agent Browser across all pages
+- Lint passes cleanly, no runtime errors
+
+Stage Summary:
+- 23+ modals implemented across all 9 pages
+- All modals use shadcn/ui Dialog with centered overlay
+- Fixed tall modal overflow with max-h-[90vh] overflow-y-auto
+- Every action button now opens a proper centered modal
+- Consistent emerald-500/600 theming across all modals
+- French labels and descriptions on every modal
+- No lint errors, no runtime errors
