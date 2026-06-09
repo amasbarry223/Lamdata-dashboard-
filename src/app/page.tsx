@@ -9,6 +9,8 @@ import { RecentRequests } from "@/components/dashboard/recent-requests";
 import { PendingApprovalsTable } from "@/components/dashboard/pending-approvals-table";
 import { ApprovalWorkflow } from "@/components/dashboard/approval-workflow";
 import { useNavigation } from "@/lib/navigation";
+import { useAuth } from "@/lib/auth";
+import { LoginPage } from "@/components/dashboard/login-page";
 
 import CampagnesPage from "@/components/dashboard/pages/campagnes";
 import PhrasesPage from "@/components/dashboard/pages/phrases";
@@ -71,6 +73,12 @@ function PageRenderer() {
 }
 
 export default function Home() {
+  const { isAuthenticated } = useAuth();
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
       <Sidebar />

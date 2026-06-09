@@ -34,9 +34,11 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { useNavigation } from "@/lib/navigation";
+import { useAuth } from "@/lib/auth";
 
 export function Header() {
   const { setActivePage } = useNavigation();
+  const { logout } = useAuth();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
@@ -329,7 +331,10 @@ export function Header() {
             </Button>
             <Button
               className="bg-red-500 hover:bg-red-600 text-white gap-1.5"
-              onClick={() => setShowLogoutModal(false)}
+              onClick={() => {
+                setShowLogoutModal(false);
+                logout();
+              }}
             >
               <LogOut className="h-4 w-4" /> Se Déconnecter
             </Button>
