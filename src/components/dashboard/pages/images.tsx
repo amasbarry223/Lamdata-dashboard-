@@ -25,6 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
 const images = [
   { id: "IMG-001", name: "Marché Dakar", tags: ["marché", "commerce", "nourriture"], questions: 3, validations: 45, status: "Active", statusColor: "bg-emerald-100 text-emerald-700", description: "Scène de marché typique à Dakar avec des étals de fruits et légumes.", campaign: "CAMP-006" },
@@ -33,6 +34,12 @@ const images = [
   { id: "IMG-004", name: "École Primaire Ouaga", tags: ["éducation", "école", "enfants"], questions: 2, validations: 51, status: "Active", statusColor: "bg-emerald-100 text-emerald-700", description: "Classe d'école primaire à Ouagadougou, Burkina Faso.", campaign: "CAMP-004" },
   { id: "IMG-005", name: "Transport Commun", tags: ["transport", "bus", "rue"], questions: 3, validations: 19, status: "Active", statusColor: "bg-emerald-100 text-emerald-700", description: "Arrêt de bus et transport en commun dans une rue animée.", campaign: "CAMP-003" },
   { id: "IMG-006", name: "Atelier Artisanat", tags: ["artisanat", "travail", "bois"], questions: 1, validations: 8, status: "Inactive", statusColor: "bg-gray-100 text-gray-600", description: "Artisan travaillant le bois dans un atelier traditionnel.", campaign: "—" },
+  { id: "IMG-007", name: "Rizière Casamance", tags: ["agriculture", "riz", "casamance"], questions: 2, validations: 37, status: "Active", statusColor: "bg-emerald-100 text-emerald-700", description: "Rizière en zone humide de Casamance, Sénégal.", campaign: "CAMP-002" },
+  { id: "IMG-008", name: "Gare Routière Bamako", tags: ["transport", "gare", "bus"], questions: 3, validations: 24, status: "Active", statusColor: "bg-emerald-100 text-emerald-700", description: "Gare routière principale de Bamako, Mali.", campaign: "CAMP-003" },
+  { id: "IMG-009", name: "Pharmacie Dakar", tags: ["santé", "pharmacie", "médicaments"], questions: 4, validations: 42, status: "Active", statusColor: "bg-emerald-100 text-emerald-700", description: "Pharmacie de quartier à Dakar, Sénégal.", campaign: "CAMP-001" },
+  { id: "IMG-010", name: "Marché aux Poissons", tags: ["poisson", "marché", "pêche"], questions: 2, validations: 56, status: "Active", statusColor: "bg-emerald-100 text-emerald-700", description: "Marché aux poissons sur la côte sénégalaise.", campaign: "CAMP-006" },
+  { id: "IMG-011", name: "Champs Coton", tags: ["agriculture", "coton", "champ"], questions: 1, validations: 15, status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", description: "Champ de coton dans la zone cotonnière du Mali.", campaign: "CAMP-002" },
+  { id: "IMG-012", name: "École Coranique", tags: ["éducation", "école", "coran"], questions: 3, validations: 33, status: "Active", statusColor: "bg-emerald-100 text-emerald-700", description: "École coranique traditionnelle au Sahel.", campaign: "CAMP-004" },
 ];
 
 export default function ImagesPage() {
@@ -40,6 +47,11 @@ export default function ImagesPage() {
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedImage, setSelectedImage] = useState<(typeof images)[0] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
+
+  const totalPages = Math.ceil(images.length / pageSize);
+  const paginatedImages = images.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const openConfig = (img: (typeof images)[0]) => {
     setSelectedImage(img);
@@ -88,7 +100,7 @@ export default function ImagesPage() {
 
       {/* Image Grid */}
       <div className="grid grid-cols-3 gap-4">
-        {images.map((img) => (
+        {paginatedImages.map((img) => (
           <div key={img.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
             <div className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative cursor-pointer" onClick={() => openDetail(img)}>
               <ImageIcon className="h-12 w-12 text-gray-300" />
@@ -117,6 +129,20 @@ export default function ImagesPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      {/* Pagination */}
+      <div className="bg-white border border-gray-200 rounded-xl px-4">
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={images.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+          pageSizeOptions={[3, 6, 9, 12]}
+          label="images"
+        />
       </div>
 
       {/* Modal: Ajouter Image */}

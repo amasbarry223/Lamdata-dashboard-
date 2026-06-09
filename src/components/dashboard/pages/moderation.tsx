@@ -25,6 +25,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
 const contributions = [
   { id: "CONT-4872", contributor: "Fatou Ndiaye", type: "Audio", language: "Wolof", date: "Mai 15, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.65, flagReason: "Qualité audio médiocre", avatar: "FN", avatarColor: "bg-blue-100 text-blue-700", detail: "Enregistrement avec beaucoup de bruit de fond. La phrase est partiellement audible." },
@@ -34,6 +35,24 @@ const contributions = [
   { id: "CONT-4868", contributor: "Mariam Sow", type: "Traduction", language: "Wolof", date: "Mai 14, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.44, flagReason: "Contenu offensant", avatar: "MS", avatarColor: "bg-pink-100 text-pink-700", detail: "La traduction contient du langage inapproprié ou offensant." },
   { id: "CONT-4867", contributor: "Omar Diallo", type: "Audio", language: "Bambara", date: "Mai 13, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.77, flagReason: "Doublon détecté", avatar: "OD", avatarColor: "bg-green-100 text-green-700", detail: "Cet audio semble être une copie d'une soumission précédente du même contributeur." },
   { id: "CONT-4866", contributor: "Awa Keita", type: "Image", language: "Dioula", date: "Mai 13, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.52, flagReason: "Image floue", avatar: "AK", avatarColor: "bg-teal-100 text-teal-700", detail: "L'image est trop floue pour permettre une annotation fiable." },
+  { id: "CONT-4865", contributor: "Amadou Bamba", type: "Audio", language: "Wolof", date: "Mai 13, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.38, flagReason: "Prononciation incorrecte", avatar: "AB", avatarColor: "bg-amber-100 text-amber-700", detail: "La prononciation ne correspond pas aux standards attendus pour cette langue." },
+  { id: "CONT-4864", contributor: "Khady Sène", type: "Traduction", language: "Soninké", date: "Mai 12, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.70, flagReason: "Traduction hors contexte", avatar: "KS", avatarColor: "bg-blue-100 text-blue-700", detail: "La traduction ne tient pas compte du contexte culturel spécifique de la phrase." },
+  { id: "CONT-4863", contributor: "Boubacar Diallo", type: "Audio", language: "Pulaar", date: "Mai 12, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.47, flagReason: "Audio trop court", avatar: "BD", avatarColor: "bg-orange-100 text-orange-700", detail: "L'enregistrement est trop court pour être exploitable, il manque une partie de la phrase." },
+  { id: "CONT-4862", contributor: "Aminata Touré", type: "Image", language: "Bambara", date: "Mai 12, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.55, flagReason: "Annotation incomplète", avatar: "AT", avatarColor: "bg-purple-100 text-purple-700", detail: "Plusieurs éléments de l'image n'ont pas été annotés correctement." },
+  { id: "CONT-4861", contributor: "Mamadou Konaté", type: "Audio", language: "Malinké", date: "Mai 11, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.83, flagReason: "Répétition excessive", avatar: "MK", avatarColor: "bg-red-100 text-red-700", detail: "L'audio contient des répétitions non nécessaires qui affectent la qualité." },
+  { id: "CONT-4860", contributor: "Fatoumata Diarra", type: "Traduction", language: "Bambara", date: "Mai 11, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.41, flagReason: "Traduction approximative", avatar: "FD", avatarColor: "bg-pink-100 text-pink-700", detail: "La traduction comporte des erreurs significatives qui altèrent le sens." },
+  { id: "CONT-4859", contributor: "Sekou Coulibaly", type: "Audio", language: "Dioula", date: "Mai 11, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.74, flagReason: "Qualité audio médiocre", avatar: "SC", avatarColor: "bg-green-100 text-green-700", detail: "Bruit de fond important rendant certaines portions inaudibles." },
+  { id: "CONT-4858", contributor: "Oumou Sangaré", type: "Traduction", language: "Soninké", date: "Mai 11, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.33, flagReason: "Contenu hors sujet", avatar: "OS", avatarColor: "bg-teal-100 text-teal-700", detail: "La traduction ne correspond pas au texte source et semble traiter d'un autre sujet." },
+  { id: "CONT-4857", contributor: "Adama Sanogo", type: "Image", language: "Wolof", date: "Mai 10, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.50, flagReason: "Image floue", avatar: "AS", avatarColor: "bg-amber-100 text-amber-700", detail: "L'image soumise est floue et ne permet pas une annotation correcte." },
+  { id: "CONT-4856", contributor: "Rama Traoré", type: "Audio", language: "Bambara", date: "Mai 10, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.88, flagReason: "Possible triche", avatar: "RT", avatarColor: "bg-blue-100 text-blue-700", detail: "L'audio présente des caractéristiques suspectes suggérant un enregistrement artificiel." },
+  { id: "CONT-4855", contributor: "Bakary Cissé", type: "Traduction", language: "Pulaar", date: "Mai 10, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.39, flagReason: "Langue incorrecte", avatar: "BC", avatarColor: "bg-orange-100 text-orange-700", detail: "La traduction utilise une langue différente de celle attendue pour cette tâche." },
+  { id: "CONT-4854", contributor: "Kadiatou Bah", type: "Audio", language: "Malinké", date: "Mai 10, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.45, flagReason: "Audio tronqué", avatar: "KB", avatarColor: "bg-purple-100 text-purple-700", detail: "L'enregistrement est tronqué et manque la fin de la phrase attendue." },
+  { id: "CONT-4853", contributor: "Moussa Keita", type: "Image", language: "Dioula", date: "Mai 10, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.79, flagReason: "Annotation incorrecte", avatar: "MK", avatarColor: "bg-red-100 text-red-700", detail: "Certaines annotations sur l'image sont incorrectes ou mal positionnées." },
+  { id: "CONT-4852", contributor: "Aissata Camara", type: "Traduction", language: "Wolof", date: "Mai 10, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.30, flagReason: "Contenu offensant", avatar: "AC", avatarColor: "bg-pink-100 text-pink-700", detail: "La traduction contient des propos inappropriés et offensants." },
+  { id: "CONT-4851", contributor: "Lamine Diabaté", type: "Audio", language: "Soninké", date: "Mai 10, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.56, flagReason: "Répétition excessive", avatar: "LD", avatarColor: "bg-green-100 text-green-700", detail: "L'audio contient des répétitions excessives qui nuisent à la compréhension." },
+  { id: "CONT-4850", contributor: "Mariatou Soulama", type: "Traduction", language: "Bambara", date: "Mai 10, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.85, flagReason: "Traduction hors contexte", avatar: "MS", avatarColor: "bg-teal-100 text-teal-700", detail: "La traduction est grammaticalement correcte mais ne respecte pas le contexte d'origine." },
+  { id: "CONT-4849", contributor: "Djibril Sylla", type: "Audio", language: "Wolof", date: "Mai 10, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.42, flagReason: "Prononciation incorrecte", avatar: "DS", avatarColor: "bg-amber-100 text-amber-700", detail: "La prononciation comporte des erreurs significatives par rapport à la norme." },
+  { id: "CONT-4848", contributor: "Hawa Dembélé", type: "Image", language: "Pulaar", date: "Mai 10, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.35, flagReason: "Doublon détecté", avatar: "HD", avatarColor: "bg-blue-100 text-blue-700", detail: "L'image soumise est identique à une contribution précédemment validée." },
 ];
 
 export default function ModerationPage() {
@@ -41,6 +60,14 @@ export default function ModerationPage() {
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [selectedContribution, setSelectedContribution] = useState<(typeof contributions)[0] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const totalPages = Math.ceil(contributions.length / pageSize);
+  const paginatedContributions = contributions.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const openDetail = (c: (typeof contributions)[0]) => {
     setSelectedContribution(c);
@@ -56,6 +83,8 @@ export default function ModerationPage() {
     setSelectedContribution(c);
     setShowRejectModal(true);
   };
+
+  const signaleCount = contributions.filter((c) => c.status === "Signalé").length;
 
   return (
     <div className="space-y-6">
@@ -74,7 +103,7 @@ export default function ModerationPage() {
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-4">
           <div className="h-10 w-10 bg-red-100 rounded-full flex items-center justify-center"><AlertTriangle className="h-5 w-5 text-red-500" /></div>
           <div>
-            <p className="text-2xl font-bold text-red-700">7</p>
+            <p className="text-2xl font-bold text-red-700">{signaleCount}</p>
             <p className="text-xs text-red-600">Contributions Signalées</p>
           </div>
         </div>
@@ -121,7 +150,7 @@ export default function ModerationPage() {
             </tr>
           </thead>
           <tbody>
-            {contributions.map((c) => (
+            {paginatedContributions.map((c) => (
               <tr key={c.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
                 <td className="py-3 px-4 text-sm font-medium text-emerald-600">{c.id}</td>
                 <td className="py-3 px-4">
@@ -153,6 +182,16 @@ export default function ModerationPage() {
             ))}
           </tbody>
         </table>
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={contributions.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+          pageSizeOptions={[5, 10, 20, 50]}
+          label="contributions"
+        />
       </div>
 
       {/* Modal: Détails Contribution */}

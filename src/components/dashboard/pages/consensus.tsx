@@ -24,6 +24,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
 const reviews = [
   { id: "CONT-4880", contributor: "Fatou Ndiaye", type: "Audio", language: "Wolof", yesVotes: 8, noVotes: 1, totalVotes: 9, consensus: "Approuvé", consensusColor: "bg-emerald-100 text-emerald-700", avatar: "FN", avatarColor: "bg-blue-100 text-blue-700", phrase: "Naka nga def sa alal?", comments: ["Bonne prononciation", "Audio clair", "Phrase correcte"] },
@@ -32,12 +33,31 @@ const reviews = [
   { id: "CONT-4877", contributor: "Ibrahim Coulibaly", type: "Audio", language: "Pulaar", yesVotes: 6, noVotes: 2, totalVotes: 8, consensus: "Approuvé", consensusColor: "bg-emerald-100 text-emerald-700", avatar: "IC", avatarColor: "bg-red-100 text-red-700", phrase: "Miɗɗo heɓɓay ngam nyaamo?", comments: ["Prononciation naturelle", "Bonne qualité audio"] },
   { id: "CONT-4876", contributor: "Mariam Sow", type: "Traduction", language: "Wolof", yesVotes: 4, noVotes: 4, totalVotes: 8, consensus: "Partagé", consensusColor: "bg-yellow-100 text-yellow-700", avatar: "MS", avatarColor: "bg-pink-100 text-pink-700", phrase: "Alhamdulillah, naka la waɗɓe?", comments: ["Traduction littérale", "Perte de nuance", "Contexte manquant"] },
   { id: "CONT-4875", contributor: "Omar Diallo", type: "Audio", language: "Bambara", yesVotes: 9, noVotes: 0, totalVotes: 9, consensus: "Approuvé", consensusColor: "bg-emerald-100 text-emerald-700", avatar: "OD", avatarColor: "bg-green-100 text-green-700", phrase: "Mɔgɔw be timinɛ kɛ?", comments: ["Excellent", "Parfaitement naturel", "Très bonne qualité"] },
+  { id: "CONT-4874", contributor: "Amadou Bamba", type: "Audio", language: "Wolof", yesVotes: 9, noVotes: 0, totalVotes: 9, consensus: "Approuvé", consensusColor: "bg-emerald-100 text-emerald-700", avatar: "AB", avatarColor: "bg-teal-100 text-teal-700", phrase: "Jàng naa te xam naa ñaari lès", comments: ["Voix très claire", "Enregistrement impeccable", "Prononciation impeccable"] },
+  { id: "CONT-4873", contributor: "Khady Sène", type: "Traduction", language: "Soninké", yesVotes: 3, noVotes: 6, totalVotes: 9, consensus: "Rejeté", consensusColor: "bg-red-100 text-red-700", avatar: "KS", avatarColor: "bg-rose-100 text-rose-700", phrase: "N ti dà tàgà yì nǹù", comments: ["Traduction erronée", "Faux sens sur le verbe", "Grammaire incorrecte"] },
+  { id: "CONT-4872", contributor: "Boubacar Diallo", type: "Image", language: "Pulaar", yesVotes: 7, noVotes: 2, totalVotes: 9, consensus: "Approuvé", consensusColor: "bg-emerald-100 text-emerald-700", avatar: "BD", avatarColor: "bg-indigo-100 text-indigo-700", phrase: "Ɓiɗɗo gorko on mari haŋke", comments: ["Bonne annotation", "Image nette", "Labels corrects"] },
+  { id: "CONT-4871", contributor: "Aminata Touré", type: "Audio", language: "Bambara", yesVotes: 5, noVotes: 5, totalVotes: 10, consensus: "Partagé", consensusColor: "bg-yellow-100 text-yellow-700", avatar: "AT", avatarColor: "bg-cyan-100 text-cyan-700", phrase: "À nùmùn kɛ tùn yè", comments: ["Bruits de fond", "Intonation discutable", "Vitesse trop rapide"] },
+  { id: "CONT-4870", contributor: "Mamadou Konaté", type: "Traduction", language: "Malinké", yesVotes: 8, noVotes: 1, totalVotes: 9, consensus: "Approuvé", consensusColor: "bg-emerald-100 text-emerald-700", avatar: "MK", avatarColor: "bg-amber-100 text-amber-700", phrase: "I bɛ fɔlɔ kɛ nɛnɛ na", comments: ["Traduction fluide", "Respecte le contexte", "Très fidèle"] },
+  { id: "CONT-4869", contributor: "Fatoumata Diarra", type: "Image", language: "Bambara", yesVotes: 1, noVotes: 8, totalVotes: 9, consensus: "Rejeté", consensusColor: "bg-red-100 text-red-700", avatar: "FD", avatarColor: "bg-lime-100 text-lime-700", phrase: "Sòrò dugu ba la", comments: ["Image floue", "Aucun rapport avec le texte", "Résolution trop basse"] },
+  { id: "CONT-4868", contributor: "Sekou Coulibaly", type: "Audio", language: "Dioula", yesVotes: 9, noVotes: 0, totalVotes: 9, consensus: "Approuvé", consensusColor: "bg-emerald-100 text-emerald-700", avatar: "SC", avatarColor: "bg-violet-100 text-violet-700", phrase: "A yé wólo dòròn yè", comments: ["Qualité studio", "Parfait", "Rien à redire"] },
+  { id: "CONT-4867", contributor: "Oumou Sangaré", type: "Traduction", language: "Soninké", yesVotes: 4, noVotes: 5, totalVotes: 9, consensus: "Rejeté", consensusColor: "bg-red-100 text-red-700", avatar: "OS", avatarColor: "bg-fuchsia-100 text-fuchsia-700", phrase: "N tàxù nà dà yì nǹù", comments: ["Sens inversé", "Mauvaise conjugaison", "Confusion de vocabulaire"] },
+  { id: "CONT-4866", contributor: "Adama Sanogo", type: "Audio", language: "Malinké", yesVotes: 6, noVotes: 4, totalVotes: 10, consensus: "Partagé", consensusColor: "bg-yellow-100 text-yellow-700", avatar: "AS", avatarColor: "bg-sky-100 text-sky-700", phrase: "Ì kɛra sìrìkè yè", comments: ["Accent régional marqué", "Compréhensible mais imparfait", "Quelques hésitations"] },
+  { id: "CONT-4865", contributor: "Rama Traoré", type: "Image", language: "Wolof", yesVotes: 7, noVotes: 3, totalVotes: 10, consensus: "Approuvé", consensusColor: "bg-emerald-100 text-emerald-700", avatar: "RT", avatarColor: "bg-emerald-100 text-emerald-700", phrase: "Dëkk bi rafet na bëgg ba", comments: ["Bonne qualité d'image", "Annotations précises", "Cadre bien choisi"] },
+  { id: "CONT-4864", contributor: "Bakary Cissé", type: "Traduction", language: "Pulaar", yesVotes: 9, noVotes: 0, totalVotes: 9, consensus: "Approuvé", consensusColor: "bg-emerald-100 text-emerald-700", avatar: "BC", avatarColor: "bg-yellow-100 text-yellow-700", phrase: "Miɗɗo yahdu wardi haŋke", comments: ["Traduction parfaite", "Style naturel", "Terminologie exacte"] },
+  { id: "CONT-4863", contributor: "Kadiatou Bah", type: "Audio", language: "Dioula", yesVotes: 2, noVotes: 7, totalVotes: 9, consensus: "Rejeté", consensusColor: "bg-red-100 text-red-700", avatar: "KB", avatarColor: "bg-orange-100 text-orange-700", phrase: "I yé kè wàlè yè", comments: ["Volume trop bas", "Prononciation incorrecte", "Écho important", "Inaudible par moments"] },
+  { id: "CONT-4862", contributor: "Fatou Ndiaye", type: "Traduction", language: "Wolof", yesVotes: 7, noVotes: 2, totalVotes: 9, consensus: "Approuvé", consensusColor: "bg-emerald-100 text-emerald-700", avatar: "FN", avatarColor: "bg-blue-100 text-blue-700", phrase: "Dama bëgg a dem fan", comments: ["Bonne traduction", "Fidèle au sens", "Style fluide"] },
+  { id: "CONT-4861", contributor: "Moussa Traoré", type: "Image", language: "Bambara", yesVotes: 4, noVotes: 4, totalVotes: 8, consensus: "Partagé", consensusColor: "bg-yellow-100 text-yellow-700", avatar: "MT", avatarColor: "bg-orange-100 text-orange-700", phrase: "Dùgu bɛɛ bɛ sɔrɔ", comments: ["Image moyenne", "Cadrage à revoir", "Étiquettes partielles"] },
 ];
 
 export default function ConsensusPage() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showArbitrateModal, setShowArbitrateModal] = useState(false);
   const [selectedReview, setSelectedReview] = useState<(typeof reviews)[0] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const totalPages = Math.ceil(reviews.length / pageSize);
+  const paginatedReviews = reviews.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const openDetail = (r: (typeof reviews)[0]) => {
     setSelectedReview(r);
@@ -105,7 +125,7 @@ export default function ConsensusPage() {
             </tr>
           </thead>
           <tbody>
-            {reviews.map((r) => (
+            {paginatedReviews.map((r) => (
               <tr key={r.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
                 <td className="py-3 px-4 text-sm font-medium text-emerald-600">{r.id}</td>
                 <td className="py-3 px-4">
@@ -137,6 +157,16 @@ export default function ConsensusPage() {
             ))}
           </tbody>
         </table>
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={reviews.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+          pageSizeOptions={[5, 10, 20, 50]}
+          label="votes"
+        />
       </div>
 
       {/* Modal: Détails Consensus */}

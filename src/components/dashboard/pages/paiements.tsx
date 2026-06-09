@@ -24,6 +24,7 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
 const payments = [
   { id: "PAY-0189", name: "Fatou Ndiaye", amount: "15,000 XOF", amountNum: 15000, operator: "Wave", phone: "+221 77 123 4567", date: "Mai 15, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 3, avatar: "FN", avatarColor: "bg-blue-100 text-blue-700" },
@@ -33,6 +34,19 @@ const payments = [
   { id: "PAY-0185", name: "Mariam Sow", amount: "12,750 XOF", amountNum: 12750, operator: "Wave", phone: "+221 76 333 4444", date: "Mai 14, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 3, avatar: "MS", avatarColor: "bg-pink-100 text-pink-700" },
   { id: "PAY-0184", name: "Omar Diallo", amount: "6,000 XOF", amountNum: 6000, operator: "Orange Money", phone: "+223 75 555 6666", date: "Mai 13, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 2, avatar: "OD", avatarColor: "bg-green-100 text-green-700" },
   { id: "PAY-0183", name: "Awa Keita", amount: "35,000 XOF", amountNum: 35000, operator: "MTN", phone: "+225 05 777 8888", date: "Mai 13, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 5, avatar: "AK", avatarColor: "bg-teal-100 text-teal-700" },
+  { id: "PAY-0182", name: "Lamine Diabaté", amount: "4,700 XOF", amountNum: 4700, operator: "Free Money", phone: "+221 76 456 7890", date: "Mai 12, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 1, avatar: "LD", avatarColor: "bg-cyan-100 text-cyan-700" },
+  { id: "PAY-0181", name: "Kadiatou Bah", amount: "28,500 XOF", amountNum: 28500, operator: "Free Money", phone: "+221 76 345 6789", date: "Mai 12, 2024", status: "Rejeté", statusColor: "bg-red-100 text-red-700", level: 4, avatar: "KB", avatarColor: "bg-amber-100 text-amber-700", rejectReason: "Fraude détectée" },
+  { id: "PAY-0180", name: "Bakary Cissé", amount: "9,400 XOF", amountNum: 9400, operator: "MTN", phone: "+225 07 234 5678", date: "Mai 13, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 2, avatar: "BC", avatarColor: "bg-indigo-100 text-indigo-700" },
+  { id: "PAY-0179", name: "Rama Traoré", amount: "18,600 XOF", amountNum: 18600, operator: "Orange Money", phone: "+223 76 123 4567", date: "Mai 13, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 3, avatar: "RT", avatarColor: "bg-rose-100 text-rose-700" },
+  { id: "PAY-0178", name: "Adama Sanogo", amount: "3,200 XOF", amountNum: 3200, operator: "Wave", phone: "+221 78 012 3456", date: "Mai 13, 2024", status: "Rejeté", statusColor: "bg-red-100 text-red-700", level: 1, avatar: "AS", avatarColor: "bg-violet-100 text-violet-700", rejectReason: "Doublon de demande" },
+  { id: "PAY-0177", name: "Oumou Sangaré", amount: "42,000 XOF", amountNum: 42000, operator: "Free Money", phone: "+221 77 901 2345", date: "Mai 14, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 5, avatar: "OS", avatarColor: "bg-fuchsia-100 text-fuchsia-700" },
+  { id: "PAY-0176", name: "Sekou Coulibaly", amount: "7,800 XOF", amountNum: 7800, operator: "MTN", phone: "+225 05 890 1234", date: "Mai 14, 2024", status: "Rejeté", statusColor: "bg-red-100 text-red-700", level: 2, avatar: "SC", avatarColor: "bg-lime-100 text-lime-700", rejectReason: "Montant incorrect" },
+  { id: "PAY-0175", name: "Fatoumata Diarra", amount: "12,300 XOF", amountNum: 12300, operator: "Orange Money", phone: "+223 75 789 0123", date: "Mai 14, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 3, avatar: "FD", avatarColor: "bg-sky-100 text-sky-700" },
+  { id: "PAY-0174", name: "Mamadou Konaté", amount: "35,000 XOF", amountNum: 35000, operator: "Wave", phone: "+221 76 678 9012", date: "Mai 15, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 5, avatar: "MK", avatarColor: "bg-emerald-100 text-emerald-700" },
+  { id: "PAY-0173", name: "Aminata Touré", amount: "5,500 XOF", amountNum: 5500, operator: "Free Money", phone: "+221 78 567 8901", date: "Mai 15, 2024", status: "Rejeté", statusColor: "bg-red-100 text-red-700", level: 1, avatar: "AT", avatarColor: "bg-yellow-100 text-yellow-700", rejectReason: "Compte Mobile Money invalide" },
+  { id: "PAY-0172", name: "Boubacar Diallo", amount: "25,000 XOF", amountNum: 25000, operator: "MTN", phone: "+225 07 456 7891", date: "Mai 15, 2024", status: "Payé", statusColor: "bg-emerald-100 text-emerald-700", level: 4, avatar: "BD", avatarColor: "bg-orange-100 text-orange-700" },
+  { id: "PAY-0171", name: "Khady Sène", amount: "8,200 XOF", amountNum: 8200, operator: "Orange Money", phone: "+223 76 345 6789", date: "Mai 16, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 2, avatar: "KS", avatarColor: "bg-pink-100 text-pink-700" },
+  { id: "PAY-0170", name: "Amadou Bamba", amount: "15,000 XOF", amountNum: 15000, operator: "Wave", phone: "+221 77 234 5678", date: "Mai 16, 2024", status: "En Attente", statusColor: "bg-yellow-100 text-yellow-700", level: 3, avatar: "AB", avatarColor: "bg-blue-100 text-blue-700" },
 ];
 
 const statusIcon: Record<string, typeof Clock> = {
@@ -46,6 +60,14 @@ export default function PaiementsPage() {
   const [showRejectModal, setShowRejectModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedPayment, setSelectedPayment] = useState<(typeof payments)[0] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const totalPages = Math.ceil(payments.length / pageSize);
+  const paginatedPayments = payments.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const openValidate = (p: (typeof payments)[0]) => {
     setSelectedPayment(p);
@@ -123,7 +145,7 @@ export default function PaiementsPage() {
             </tr>
           </thead>
           <tbody>
-            {payments.map((p) => {
+            {paginatedPayments.map((p) => {
               const Icon = statusIcon[p.status] || Clock;
               return (
                 <tr key={p.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
@@ -164,6 +186,16 @@ export default function PaiementsPage() {
             })}
           </tbody>
         </table>
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={payments.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+          pageSizeOptions={[5, 10, 20, 50]}
+          label="paiements"
+        />
       </div>
 
       {/* Modal: Valider Paiement */}

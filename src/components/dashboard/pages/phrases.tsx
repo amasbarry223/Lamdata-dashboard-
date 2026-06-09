@@ -25,6 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
 const phrases = [
   { id: "PHR-00456", text: "Naka nga def sa alal?", translation: "Comment vas-tu ce matin?", language: "Wolof", type: "Audio", theme: "Santé", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 23, avatar: "WO", createdDate: "Mai 10, 2024", campaign: "CAMP-001" },
@@ -35,6 +36,34 @@ const phrases = [
   { id: "PHR-00451", text: "Mɔgɔw be timinɛ kɛ?", translation: "Que font les gens?", language: "Bambara", type: "Traduction", theme: "Finance", status: "Inactif", statusColor: "bg-gray-100 text-gray-600", submissions: 5, avatar: "BA", createdDate: "Mai 05, 2024", campaign: "CAMP-005" },
   { id: "PHR-00450", text: "N be se ka wele ka bɔ?", translation: "Je ne peux pas sortir?", language: "Dioula", type: "Audio", theme: "Santé", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 27, avatar: "DI", createdDate: "Mai 04, 2024", campaign: "CAMP-001" },
   { id: "PHR-00449", text: "Min nda ballal e ndiyam?", translation: "Où puis-je trouver de l'eau?", language: "Pulaar", type: "Traduction", theme: "Agriculture", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 14, avatar: "PU", createdDate: "Mai 03, 2024", campaign: "CAMP-002" },
+  { id: "PHR-00448", text: "Naka nga wàcc fa seen alal?", translation: "Comment dépensez-vous votre richesse?", language: "Wolof", type: "Traduction", theme: "Commerce", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 42, avatar: "WO", createdDate: "Avr 28, 2024", campaign: "CAMP-006" },
+  { id: "PHR-00447", text: "U ka bɔrɔ la nɛnɛkɛrɛ?", translation: "Où est le marché?", language: "Bambara", type: "Audio", theme: "Commerce", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 36, avatar: "BA", createdDate: "Avr 27, 2024", campaign: "CAMP-006" },
+  { id: "PHR-00446", text: "I diɛɛ n'a sɔrɔ ka nyɛ?", translation: "As-tu bien dormi?", language: "Dioula", type: "Traduction", theme: "Vie Quotidienne", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 8, avatar: "DI", createdDate: "Avr 26, 2024", campaign: "CAMP-003" },
+  { id: "PHR-00445", text: "Miɗɗo yahda janngude?", translation: "Je veux aller étudier", language: "Pulaar", type: "Audio", theme: "Éducation", status: "Inactif", statusColor: "bg-gray-100 text-gray-600", submissions: 3, avatar: "PU", createdDate: "Avr 25, 2024", campaign: "CAMP-004" },
+  { id: "PHR-00444", text: "Dama koo jënd luy lekk?", translation: "Je veux acheter à manger", language: "Wolof", type: "Audio", theme: "Vie Quotidienne", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 19, avatar: "WO", createdDate: "Avr 24, 2024", campaign: "CAMP-001" },
+  { id: "PHR-00443", text: "A bɛ tɔɔrɔ ka ɲɛ?", translation: "Le champ est beau", language: "Bambara", type: "Traduction", theme: "Agriculture", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 11, avatar: "BA", createdDate: "Avr 23, 2024", campaign: "CAMP-002" },
+  { id: "PHR-00442", text: "N ka sɔrɔ ka minan wolo?", translation: "Je n'ai pas trouvé l'argent", language: "Dioula", type: "Audio", theme: "Finance", status: "Inactif", statusColor: "bg-gray-100 text-gray-600", submissions: 6, avatar: "DI", createdDate: "Avr 22, 2024", campaign: "CAMP-005" },
+  { id: "PHR-00441", text: "Gorko aɗa waɗugo nyawɗo?", translation: "Le médecin peut-il soigner?", language: "Pulaar", type: "Traduction", theme: "Santé", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 29, avatar: "PU", createdDate: "Avr 21, 2024", campaign: "CAMP-001" },
+  { id: "PHR-00440", text: "Xarit ba la xaar ci biir?", translation: "Mon ami attend à l'intérieur", language: "Wolof", type: "Traduction", theme: "Vie Quotidienne", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 15, avatar: "WO", createdDate: "Avr 20, 2024", campaign: "CAMP-003" },
+  { id: "PHR-00439", text: "A ka wuli ka dɔgɔ ka ɲɛ?", translation: "Il faut semer tôt pour bien récolter", language: "Bambara", type: "Audio", theme: "Agriculture", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 22, avatar: "BA", createdDate: "Avr 19, 2024", campaign: "CAMP-002" },
+  { id: "PHR-00438", text: "A yɛ sɔrɔla ka ɲagami?", translation: "Combien ça coûte?", language: "Dioula", type: "Traduction", theme: "Commerce", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 44, avatar: "DI", createdDate: "Avr 18, 2024", campaign: "CAMP-006" },
+  { id: "PHR-00437", text: "Ɓe njanngii e janngirde?", translation: "Ils ont étudié à l'école", language: "Pulaar", type: "Audio", theme: "Éducation", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 7, avatar: "PU", createdDate: "Avr 17, 2024", campaign: "CAMP-004" },
+  { id: "PHR-00436", text: "Dama bëgg a jàng waa gan?", translation: "Je veux apprendre une nouvelle langue", language: "Wolof", type: "Traduction", theme: "Éducation", status: "Inactif", statusColor: "bg-gray-100 text-gray-600", submissions: 2, avatar: "WO", createdDate: "Avr 16, 2024", campaign: "CAMP-004" },
+  { id: "PHR-00435", text: "N ka se ka wele dɔgɔtɔrɔ?", translation: "Il faut appeler le médecin", language: "Bambara", type: "Audio", theme: "Santé", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 38, avatar: "BA", createdDate: "Avr 15, 2024", campaign: "CAMP-001" },
+  { id: "PHR-00434", text: "N fa wolo bɛnɛ ka bɔ?", translation: "Mon argent ne suffit pas", language: "Dioula", type: "Traduction", theme: "Finance", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 16, avatar: "DI", createdDate: "Avr 14, 2024", campaign: "CAMP-005" },
+  { id: "PHR-00433", text: "Yaaye yahii ka lekk kaari?", translation: "Ma mère est allée préparer le repas", language: "Soninké", type: "Audio", theme: "Vie Quotidienne", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 10, avatar: "SO", createdDate: "Avr 13, 2024", campaign: "CAMP-003" },
+  { id: "PHR-00432", text: "N kɛnɛ bɛ la ka janɛ?", translation: "Je suis heureux de te voir", language: "Malinké", type: "Traduction", theme: "Vie Quotidienne", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 25, avatar: "ML", createdDate: "Avr 12, 2024", campaign: "CAMP-003" },
+  { id: "PHR-00431", text: "Saax mooy fenn ba xam?", translation: "Le médecin connaît la maladie", language: "Wolof", type: "Audio", theme: "Santé", status: "Inactif", statusColor: "bg-gray-100 text-gray-600", submissions: 4, avatar: "WO", createdDate: "Avr 11, 2024", campaign: "CAMP-001" },
+  { id: "PHR-00430", text: "U ka sɔrɔ wolo ja bɛnɛ?", translation: "Où peut-on trouver du crédit?", language: "Bambara", type: "Traduction", theme: "Finance", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 33, avatar: "BA", createdDate: "Avr 10, 2024", campaign: "CAMP-005" },
+  { id: "PHR-00429", text: "N be fa ka sigi ka bɔ?", translation: "Je veux m'asseoir ici", language: "Dioula", type: "Audio", theme: "Vie Quotidienne", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 13, avatar: "DI", createdDate: "Avr 09, 2024", campaign: "CAMP-003" },
+  { id: "PHR-00428", text: "Hiɗɗo faama ka nyaɓɓa?", translation: "Le chef a donné sa permission", language: "Soninké", type: "Traduction", theme: "Éducation", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 20, avatar: "SO", createdDate: "Avr 08, 2024", campaign: "CAMP-004" },
+  { id: "PHR-00427", text: "A bɛ wuli ka ɲɛ ka kɛnɛ?", translation: "Le soleil se lève brillant", language: "Malinké", type: "Audio", theme: "Agriculture", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 17, avatar: "ML", createdDate: "Avr 07, 2024", campaign: "CAMP-002" },
+  { id: "PHR-00426", text: "Dama xam ne dama méppé?", translation: "Je sais que j'ai raison", language: "Wolof", type: "Traduction", theme: "Éducation", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 1, avatar: "WO", createdDate: "Avr 06, 2024", campaign: "CAMP-004" },
+  { id: "PHR-00425", text: "Mɔgɔw be wuli ka nyɛ?", translation: "Les gens se lèvent tôt", language: "Bambara", type: "Audio", theme: "Agriculture", status: "Inactif", statusColor: "bg-gray-100 text-gray-600", submissions: 9, avatar: "BA", createdDate: "Avr 05, 2024", campaign: "CAMP-002" },
+  { id: "PHR-00424", text: "N fa wolo ka sɔrɔ bɛnɛ?", translation: "Je n'ai pas assez d'argent", language: "Dioula", type: "Traduction", theme: "Commerce", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 50, avatar: "DI", createdDate: "Avr 04, 2024", campaign: "CAMP-006" },
+  { id: "PHR-00423", text: "Ɓe njahi ka lekk nyama?", translation: "Ils sont allés chasser", language: "Pulaar", type: "Audio", theme: "Vie Quotidienne", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 21, avatar: "PU", createdDate: "Avr 03, 2024", campaign: "CAMP-003" },
+  { id: "PHR-00422", text: "Yaa nɛɛ ma yɛlɛ maŋɛ?", translation: "Qui t'a enseigné cela?", language: "Soninké", type: "Traduction", theme: "Éducation", status: "Inactif", statusColor: "bg-gray-100 text-gray-600", submissions: 7, avatar: "SO", createdDate: "Avr 02, 2024", campaign: "CAMP-004" },
+  { id: "PHR-00421", text: "N kɛnɛ bɛ ka janɛ dɔgɔtɔrɔ?", translation: "Le médecin est très compétent", language: "Malinké", type: "Audio", theme: "Santé", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 34, avatar: "ML", createdDate: "Avr 01, 2024", campaign: "CAMP-001" },
 ];
 
 export default function PhrasesPage() {
@@ -42,6 +71,11 @@ export default function PhrasesPage() {
   const [showImportModal, setShowImportModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedPhrase, setSelectedPhrase] = useState<(typeof phrases)[0] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const totalPages = Math.ceil(phrases.length / pageSize);
+  const paginatedPhrases = phrases.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
   const openDetail = (p: (typeof phrases)[0]) => {
     setSelectedPhrase(p);
@@ -102,7 +136,7 @@ export default function PhrasesPage() {
             </tr>
           </thead>
           <tbody>
-            {phrases.map((p) => (
+            {paginatedPhrases.map((p) => (
               <tr key={p.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
                 <td className="py-3 px-4 text-sm font-medium text-emerald-600">{p.id}</td>
                 <td className="py-3 px-4 text-sm text-gray-800 max-w-xs truncate">{p.text}</td>
@@ -133,6 +167,16 @@ export default function PhrasesPage() {
             ))}
           </tbody>
         </table>
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={phrases.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+          pageSizeOptions={[5, 10, 20, 50]}
+          label="phrases"
+        />
       </div>
 
       {/* Modal: Ajouter Phrase */}

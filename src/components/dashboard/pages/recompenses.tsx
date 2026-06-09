@@ -23,6 +23,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
 const contributors = [
   { id: "USR-001", name: "Fatou Ndiaye", level: 4, totalEarned: "125,000 XOF", pending: "15,000 XOF", contributions: 342, language: "Wolof", badge: "⭐", avatar: "FN", avatarColor: "bg-blue-100 text-blue-700", joinDate: "Jan 2024", streak: 28 },
@@ -32,6 +33,23 @@ const contributors = [
   { id: "USR-005", name: "Mariam Sow", level: 3, totalEarned: "92,750 XOF", pending: "12,750 XOF", contributions: 289, language: "Wolof", badge: "🔥", avatar: "MS", avatarColor: "bg-pink-100 text-pink-700", joinDate: "Jan 2024", streak: 19 },
   { id: "USR-006", name: "Omar Diallo", level: 2, totalEarned: "45,000 XOF", pending: "6,000 XOF", contributions: 134, language: "Bambara", badge: "💪", avatar: "OD", avatarColor: "bg-green-100 text-green-700", joinDate: "Mars 2024", streak: 7 },
   { id: "USR-007", name: "Awa Keita", level: 5, totalEarned: "312,000 XOF", pending: "0 XOF", contributions: 612, language: "Wolof", badge: "👑", avatar: "AK", avatarColor: "bg-teal-100 text-teal-700", joinDate: "Nov 2023", streak: 65 },
+  { id: "USR-008", name: "Amadou Bamba", level: 5, totalEarned: "350,000 XOF", pending: "18,500 XOF", contributions: 698, language: "Wolof", badge: "👑", avatar: "AB", avatarColor: "bg-yellow-100 text-yellow-700", joinDate: "Nov 2023", streak: 70 },
+  { id: "USR-009", name: "Khady Sène", level: 2, totalEarned: "32,000 XOF", pending: "4,500 XOF", contributions: 87, language: "Wolof", badge: "💪", avatar: "KS", avatarColor: "bg-cyan-100 text-cyan-700", joinDate: "Fév 2024", streak: 5 },
+  { id: "USR-010", name: "Boubacar Diallo", level: 4, totalEarned: "187,500 XOF", pending: "25,000 XOF", contributions: 410, language: "Pulaar", badge: "⭐", avatar: "BD", avatarColor: "bg-indigo-100 text-indigo-700", joinDate: "Déc 2023", streak: 38 },
+  { id: "USR-011", name: "Aminata Touré", level: 3, totalEarned: "95,200 XOF", pending: "10,800 XOF", contributions: 265, language: "Bambara", badge: "🔥", avatar: "AT", avatarColor: "bg-rose-100 text-rose-700", joinDate: "Jan 2024", streak: 22 },
+  { id: "USR-012", name: "Mamadou Konaté", level: 1, totalEarned: "5,000 XOF", pending: "1,200 XOF", contributions: 12, language: "Bambara", badge: "🌱", avatar: "MK", avatarColor: "bg-lime-100 text-lime-700", joinDate: "Avr 2024", streak: 1 },
+  { id: "USR-013", name: "Fatoumata Diarra", level: 3, totalEarned: "88,300 XOF", pending: "9,700 XOF", contributions: 245, language: "Bambara", badge: "🔥", avatar: "FD", avatarColor: "bg-amber-100 text-amber-700", joinDate: "Déc 2023", streak: 16 },
+  { id: "USR-014", name: "Sekou Coulibaly", level: 2, totalEarned: "52,000 XOF", pending: "7,500 XOF", contributions: 152, language: "Dioula", badge: "💪", avatar: "SC", avatarColor: "bg-emerald-100 text-emerald-700", joinDate: "Mars 2024", streak: 9 },
+  { id: "USR-015", name: "Oumou Sangaré", level: 4, totalEarned: "175,000 XOF", pending: "20,000 XOF", contributions: 398, language: "Soninké", badge: "⭐", avatar: "OS", avatarColor: "bg-fuchsia-100 text-fuchsia-700", joinDate: "Nov 2023", streak: 45 },
+  { id: "USR-016", name: "Adama Sanogo", level: 1, totalEarned: "12,500 XOF", pending: "2,800 XOF", contributions: 35, language: "Bambara", badge: "🌱", avatar: "AS", avatarColor: "bg-sky-100 text-sky-700", joinDate: "Avr 2024", streak: 2 },
+  { id: "USR-017", name: "Rama Traoré", level: 2, totalEarned: "38,000 XOF", pending: "5,200 XOF", contributions: 108, language: "Dioula", badge: "💪", avatar: "RT", avatarColor: "bg-violet-100 text-violet-700", joinDate: "Fév 2024", streak: 8 },
+  { id: "USR-018", name: "Bakary Cissé", level: 5, totalEarned: "298,000 XOF", pending: "0 XOF", contributions: 585, language: "Malinké", badge: "👑", avatar: "BC", avatarColor: "bg-orange-100 text-orange-700", joinDate: "Nov 2023", streak: 58 },
+  { id: "USR-019", name: "Kadiatou Bah", level: 3, totalEarned: "72,000 XOF", pending: "11,300 XOF", contributions: 198, language: "Pulaar", badge: "🔥", avatar: "KB", avatarColor: "bg-teal-100 text-teal-700", joinDate: "Jan 2024", streak: 12 },
+  { id: "USR-020", name: "Lamine Diabaté", level: 2, totalEarned: "41,500 XOF", pending: "6,800 XOF", contributions: 118, language: "Malinké", badge: "💪", avatar: "LD", avatarColor: "bg-red-100 text-red-700", joinDate: "Mars 2024", streak: 6 },
+  { id: "USR-021", name: "Djenabou Bah", level: 1, totalEarned: "7,800 XOF", pending: "2,500 XOF", contributions: 18, language: "Pulaar", badge: "🌱", avatar: "DB", avatarColor: "bg-green-100 text-green-700", joinDate: "Avr 2024", streak: 4 },
+  { id: "USR-022", name: "Modibo Koné", level: 3, totalEarned: "105,000 XOF", pending: "14,200 XOF", contributions: 310, language: "Soninké", badge: "🔥", avatar: "MO", avatarColor: "bg-blue-100 text-blue-700", joinDate: "Déc 2023", streak: 25 },
+  { id: "USR-023", name: "Sira Doumbia", level: 4, totalEarned: "210,000 XOF", pending: "16,500 XOF", contributions: 478, language: "Dioula", badge: "⭐", avatar: "SD", avatarColor: "bg-purple-100 text-purple-700", joinDate: "Nov 2023", streak: 50 },
+  { id: "USR-024", name: "Cheikh Tidiane Ndiaye", level: 2, totalEarned: "28,500 XOF", pending: "3,800 XOF", contributions: 76, language: "Wolof", badge: "💪", avatar: "CT", avatarColor: "bg-pink-100 text-pink-700", joinDate: "Fév 2024", streak: 11 },
 ];
 
 const levelConfig: Record<number, { label: string; color: string; bg: string }> = {
@@ -46,6 +64,14 @@ export default function RecompensesPage() {
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showConfigModal, setShowConfigModal] = useState(false);
   const [selectedContributor, setSelectedContributor] = useState<(typeof contributors)[0] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const totalPages = Math.ceil(contributors.length / pageSize);
+  const paginatedContributors = contributors.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const openDetail = (c: (typeof contributors)[0]) => {
     setSelectedContributor(c);
@@ -112,7 +138,7 @@ export default function RecompensesPage() {
             </tr>
           </thead>
           <tbody>
-            {contributors.map((c) => {
+            {paginatedContributors.map((c) => {
               const lvl = levelConfig[c.level];
               return (
                 <tr key={c.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50 transition-colors">
@@ -138,6 +164,16 @@ export default function RecompensesPage() {
             })}
           </tbody>
         </table>
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={contributors.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+          pageSizeOptions={[5, 10, 20, 50]}
+          label="contributeurs"
+        />
       </div>
 
       {/* Modal: Détails Contributeur */}

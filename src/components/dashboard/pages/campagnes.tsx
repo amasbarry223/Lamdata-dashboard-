@@ -25,6 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
 const campaigns = [
   {
@@ -40,7 +41,8 @@ const campaigns = [
     progress: 72,
     startDate: "01 Mai 2024",
     endDate: "30 Juin 2024",
-    description: "Campagne de collecte audio pour des phrases médicales en Wolof. Les contributeurs enregistrent des phrases liées à la santé, aux symptômes et aux traitements.",
+    description:
+      "Campagne de collecte audio pour des phrases médicales en Wolof. Les contributeurs enregistrent des phrases liées à la santé, aux symptômes et aux traitements.",
   },
   {
     id: "CAMP-002",
@@ -55,7 +57,8 @@ const campaigns = [
     progress: 58,
     startDate: "15 Avril 2024",
     endDate: "15 Juin 2024",
-    description: "Traduction de phrases agricoles en Bambara. Focus sur les techniques de culture, les saisons et les récoltes.",
+    description:
+      "Traduction de phrases agricoles en Bambara. Focus sur les techniques de culture, les saisons et les récoltes.",
   },
   {
     id: "CAMP-003",
@@ -70,7 +73,8 @@ const campaigns = [
     progress: 45,
     startDate: "01 Mars 2024",
     endDate: "31 Mai 2024",
-    description: "Labellisation d'images de la vie quotidienne en Dioula. Les contributeurs décrivent et annotent des images.",
+    description:
+      "Labellisation d'images de la vie quotidienne en Dioula. Les contributeurs décrivent et annotent des images.",
   },
   {
     id: "CAMP-004",
@@ -85,7 +89,8 @@ const campaigns = [
     progress: 31,
     startDate: "10 Mai 2024",
     endDate: "10 Juillet 2024",
-    description: "Collecte vocale pour des phrases éducatives en Pulaar. Scolarité, formation et enseignement.",
+    description:
+      "Collecte vocale pour des phrases éducatives en Pulaar. Scolarité, formation et enseignement.",
   },
   {
     id: "CAMP-005",
@@ -100,7 +105,8 @@ const campaigns = [
     progress: 100,
     startDate: "01 Janvier 2024",
     endDate: "31 Mars 2024",
-    description: "Traduction de phrases financières en Wolof. Banque, épargne, microcrédit et Mobile Money.",
+    description:
+      "Traduction de phrases financières en Wolof. Banque, épargne, microcrédit et Mobile Money.",
   },
   {
     id: "CAMP-006",
@@ -115,7 +121,104 @@ const campaigns = [
     progress: 84,
     startDate: "01 Février 2024",
     endDate: "31 Mai 2024",
-    description: "Collecte audio pour des phrases commerciales en Bambara. Marchés, prix, négociations.",
+    description:
+      "Collecte audio pour des phrases commerciales en Bambara. Marchés, prix, négociations.",
+  },
+  {
+    id: "CAMP-007",
+    name: "Collecte Vocale Soninké - Commerce",
+    type: "Audio",
+    language: "Soninké",
+    theme: "Commerce",
+    status: "Active",
+    statusColor: "bg-emerald-100 text-emerald-700",
+    contributors: 38,
+    phrases: 250,
+    progress: 55,
+    startDate: "20 Mars 2024",
+    endDate: "20 Juin 2024",
+    description:
+      "Collecte vocale de phrases commerciales en Soninké. Échanges transfrontaliers, prix et négoce dans les marchés locaux.",
+  },
+  {
+    id: "CAMP-008",
+    name: "Traduction Malinké - Éducation",
+    type: "Traduction",
+    language: "Malinké",
+    theme: "Éducation",
+    status: "Active",
+    statusColor: "bg-emerald-100 text-emerald-700",
+    contributors: 29,
+    phrases: 180,
+    progress: 22,
+    startDate: "05 Juin 2024",
+    endDate: "05 Septembre 2024",
+    description:
+      "Traduction de phrases éducatives en Malinké. Alphabétisation, scolarisation et contenu pédagogique pour les jeunes apprenants.",
+  },
+  {
+    id: "CAMP-009",
+    name: "Labellisation Images Wolof - Santé",
+    type: "Image",
+    language: "Wolof",
+    theme: "Santé",
+    status: "En Pause",
+    statusColor: "bg-yellow-100 text-yellow-700",
+    contributors: 15,
+    phrases: 120,
+    progress: 60,
+    startDate: "10 Février 2024",
+    endDate: "10 Mai 2024",
+    description:
+      "Labellisation d'images médicales en Wolof. Identification visuelle de symptômes, équipements et pratiques de santé.",
+  },
+  {
+    id: "CAMP-010",
+    name: "Collecte Vocale Dioula - Finance",
+    type: "Audio",
+    language: "Dioula",
+    theme: "Finance",
+    status: "Active",
+    statusColor: "bg-emerald-100 text-emerald-700",
+    contributors: 51,
+    phrases: 310,
+    progress: 47,
+    startDate: "15 Avril 2024",
+    endDate: "15 Juillet 2024",
+    description:
+      "Collecte audio de phrases financières en Dioula. Services bancaires, épargne communautaire et transactions mobiles.",
+  },
+  {
+    id: "CAMP-011",
+    name: "Traduction Pulaar - Vie Quotidienne",
+    type: "Traduction",
+    language: "Pulaar",
+    theme: "Vie Quotidienne",
+    status: "Terminée",
+    statusColor: "bg-gray-100 text-gray-600",
+    contributors: 95,
+    phrases: 550,
+    progress: 100,
+    startDate: "01 Décembre 2023",
+    endDate: "28 Février 2024",
+    description:
+      "Traduction de phrases de la vie quotidienne en Pulaar. Activités domestiques, relations sociales et culture locale.",
+  },
+  {
+    id: "CAMP-012",
+    name: "Labellisation Images Bambara - Agriculture",
+    type: "Image",
+    language: "Bambara",
+    theme: "Agriculture",
+    status: "Active",
+    statusColor: "bg-emerald-100 text-emerald-700",
+    contributors: 44,
+    phrases: 290,
+    progress: 38,
+    startDate: "01 Mai 2024",
+    endDate: "01 Août 2024",
+    description:
+      "Labellisation d'images agricoles en Bambara. Cultures, outils, irrigation et pratiques agricoles traditionnelles.",
   },
 ];
 
@@ -125,6 +228,14 @@ export default function CampagnesPage() {
   const [selectedCampaign, setSelectedCampaign] = useState<
     (typeof campaigns)[0] | null
   >(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(6);
+
+  const totalPages = Math.ceil(campaigns.length / pageSize);
+  const paginatedCampaigns = campaigns.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const openDetail = (c: (typeof campaigns)[0]) => {
     setSelectedCampaign(c);
@@ -154,28 +265,32 @@ export default function CampagnesPage() {
         {[
           {
             label: "Campagnes Actives",
-            value: "4",
+            value: String(campaigns.filter((c) => c.status === "Active").length),
             icon: Megaphone,
             color: "text-emerald-600",
             bg: "bg-emerald-50",
           },
           {
             label: "Total Contributeurs",
-            value: "400",
+            value: campaigns
+              .reduce((sum, c) => sum + c.contributors, 0)
+              .toLocaleString(),
             icon: Users,
             color: "text-blue-600",
             bg: "bg-blue-50",
           },
           {
             label: "Phrases En Cours",
-            value: "1,630",
+            value: campaigns
+              .reduce((sum, c) => sum + c.phrases, 0)
+              .toLocaleString(),
             icon: FileText,
             color: "text-purple-600",
             bg: "bg-purple-50",
           },
           {
             label: "Thématiques",
-            value: "5",
+            value: String(new Set(campaigns.map((c) => c.theme)).size),
             icon: Filter,
             color: "text-amber-600",
             bg: "bg-amber-50",
@@ -216,7 +331,7 @@ export default function CampagnesPage() {
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        {campaigns.map((c) => (
+        {paginatedCampaigns.map((c) => (
           <div
             key={c.id}
             className="bg-white border border-gray-200 rounded-xl p-5 hover:shadow-md transition-shadow"
@@ -291,6 +406,22 @@ export default function CampagnesPage() {
             </div>
           </div>
         ))}
+      </div>
+
+      <div className="bg-white border border-gray-200 rounded-xl px-4">
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={campaigns.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => {
+            setPageSize(size);
+            setCurrentPage(1);
+          }}
+          pageSizeOptions={[3, 6, 9, 12]}
+          label="campagnes"
+        />
       </div>
 
       {/* Modal: Nouvelle Campagne */}

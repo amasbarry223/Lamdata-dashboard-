@@ -22,18 +22,35 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
 const recentExports = [
   { id: "EXP-012", type: "Audio", format: "ZIP + JSON", language: "Wolof", records: 12840, score: "> 0.8", date: "Mai 14, 2024", size: "2.4 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "12 min" },
   { id: "EXP-011", type: "Traduction", format: "CSV", language: "Bambara", records: 9650, score: "> 0.7", date: "Mai 12, 2024", size: "45 MB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "3 min" },
   { id: "EXP-010", type: "Image", format: "ZIP + JSON", language: "Dioula", records: 7230, score: "> 0.75", date: "Mai 10, 2024", size: "5.1 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "25 min" },
   { id: "EXP-009", type: "Audio", format: "ZIP + JSON", language: "Pulaar", records: 5890, score: "> 0.8", date: "Mai 08, 2024", size: "1.8 GB", status: "Échoué", statusColor: "bg-red-100 text-red-700", duration: "—", error: "Espace disque insuffisant" },
+  { id: "EXP-008", type: "Traduction", format: "JSON", language: "Soninké", records: 14200, score: "> 0.9", date: "Mai 07, 2024", size: "62 MB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "8 min" },
+  { id: "EXP-007", type: "Image", format: "ZIP + JSON", language: "Malinké", records: 4350, score: "> 0.6", date: "Mai 06, 2024", size: "8.2 GB", status: "En Cours", statusColor: "bg-blue-100 text-blue-700", duration: "—" },
+  { id: "EXP-006", type: "Audio", format: "ZIP + JSON", language: "Wolof", records: 10200, score: "> 0.7", date: "Mai 05, 2024", size: "3.6 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "18 min" },
+  { id: "EXP-005", type: "Traduction", format: "CSV", language: "Bambara", records: 3100, score: "> 0.5", date: "Mai 04, 2024", size: "15 MB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "2 min" },
+  { id: "EXP-004", type: "Image", format: "ZIP + JSON", language: "Dioula", records: 6780, score: "> 0.8", date: "Mai 03, 2024", size: "4.7 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "22 min" },
+  { id: "EXP-003", type: "Audio", format: "ZIP + JSON", language: "Pulaar", records: 8940, score: "> 0.6", date: "Mai 02, 2024", size: "2.9 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "14 min" },
+  { id: "EXP-002", type: "Traduction", format: "JSON", language: "Soninké", records: 2000, score: "> 0.9", date: "Mai 01, 2024", size: "28 MB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "5 min" },
+  { id: "EXP-001", type: "Image", format: "ZIP + JSON", language: "Malinké", records: 15000, score: "> 0.5", date: "Mai 01, 2024", size: "6.3 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "35 min" },
 ];
 
 export default function ExportPage() {
   const [showExportModal, setShowExportModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [selectedExport, setSelectedExport] = useState<(typeof recentExports)[0] | null>(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(10);
+
+  const totalPages = Math.ceil(recentExports.length / pageSize);
+  const paginatedExports = recentExports.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const openDetail = (e: (typeof recentExports)[0]) => {
     setSelectedExport(e);
@@ -71,7 +88,7 @@ export default function ExportPage() {
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Langue Cible</label>
             <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-              <option>Toutes les Langues</option><option>Wolof</option><option>Bambara</option><option>Dioula</option><option>Pulaar</option>
+              <option>Toutes les Langues</option><option>Wolof</option><option>Bambara</option><option>Dioula</option><option>Pulaar</option><option>Soninké</option><option>Malinké</option>
             </select>
           </div>
           <div>
@@ -142,7 +159,7 @@ export default function ExportPage() {
               </tr>
             </thead>
             <tbody>
-              {recentExports.map((e) => (
+              {paginatedExports.map((e) => (
                 <tr key={e.id} className="border-b border-gray-100 last:border-0 hover:bg-gray-50">
                   <td className="py-3 px-3 text-sm font-medium text-emerald-600">{e.id}</td>
                   <td className="py-3 px-3"><span className={`text-xs font-medium px-2 py-0.5 rounded-full ${e.type === "Audio" ? "bg-blue-100 text-blue-700" : e.type === "Traduction" ? "bg-purple-100 text-purple-700" : "bg-amber-100 text-amber-700"}`}>{e.type}</span></td>
@@ -161,6 +178,16 @@ export default function ExportPage() {
             </tbody>
           </table>
         </div>
+        <DataTablePagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          totalItems={recentExports.length}
+          pageSize={pageSize}
+          onPageChange={setCurrentPage}
+          onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
+          pageSizeOptions={[5, 10, 20]}
+          label="exports"
+        />
       </div>
 
       {/* Modal: Confirmation Export */}
