@@ -24,14 +24,10 @@ function DashboardPage() {
   return (
     <div className="space-y-6">
       <StatsCards />
-      <div className="grid grid-cols-12 gap-6">
-        <div className="col-span-8 grid grid-cols-2 gap-6">
-          <ExpenseOverviewChart />
-          <RequestsStatusChart />
-        </div>
-        <div className="col-span-4">
-          <RecentRequests />
-        </div>
+      <div className="grid grid-cols-3 gap-6">
+        <ExpenseOverviewChart />
+        <RequestsStatusChart />
+        <RecentRequests />
       </div>
       <div className="grid grid-cols-12 gap-6">
         <div className="col-span-8">

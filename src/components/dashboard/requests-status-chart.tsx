@@ -24,17 +24,17 @@ export function RequestsStatusChart() {
       <h3 className="text-base font-semibold text-gray-800 mb-5">
         Distribution Linguistique
       </h3>
-      <div className="flex items-center gap-6">
+      <div className="flex flex-col items-center gap-4">
         {/* Donut Chart */}
-        <div className="relative w-40 h-40 flex-shrink-0">
+        <div className="relative w-36 h-36 flex-shrink-0">
           <ResponsiveContainer width="100%" height="100%">
             <PieChart>
               <Pie
                 data={data}
                 cx="50%"
                 cy="50%"
-                innerRadius={50}
-                outerRadius={70}
+                innerRadius={45}
+                outerRadius={65}
                 paddingAngle={3}
                 dataKey="value"
                 strokeWidth={0}
@@ -47,13 +47,13 @@ export function RequestsStatusChart() {
           </ResponsiveContainer>
           {/* Center text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-bold text-gray-800">38.7K</span>
+            <span className="text-xl font-bold text-gray-800">38.7K</span>
             <span className="text-xs text-gray-500">Phrases</span>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="flex-1 space-y-2.5">
+        <div className="w-full space-y-2">
           {legendItems.map((item) => (
             <div key={item.label} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
