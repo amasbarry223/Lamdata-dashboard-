@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Settings,
   Globe,
@@ -24,9 +24,51 @@ import {
 } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 
+const SETTINGS_KEY = "lambdata_settings";
+
+const defaults = {
+  platformName: "Lambdata", language: "Français", timezone: "Africa/Dakar (GMT+0)", currency: "XOF (Franc CFA)",
+  notifPayments: true, notifFlagged: true, notifExport: true, notifWeekly: false,
+  consensus: "0.70", qualityScore: "0.60", minReviews: "3", flagLimit: "2",
+  adminName: "Mody Barry", adminEmail: "modybarry50@gmail.com",
+  supportEmail: "support@lambdata.ai", discord: "discord.gg/lambdata",
+};
+
 export default function ParametresPage() {
+  const [settings, setSettings] = useState(defaults);
+  const [saved, setSaved] = useState(false);
   const [showSaveModal, setShowSaveModal] = useState(false);
   const [showPasswordModal, setShowPasswordModal] = useState(false);
+  const [pwd, setPwd] = useState({ current: "", next: "", confirm: "" });
+  const [pwdError, setPwdError] = useState("");
+
+  useEffect(() => {
+    try {
+      const stored = localStorage.getItem(SETTINGS_KEY);
+      if (stored) setSettings({ ...defaults, ...JSON.parse(stored) });
+    } catch { /* ignore */ }
+  }, []);
+
+  const set = (key: keyof typeof defaults, value: string | boolean) =>
+    setSettings((s) => ({ ...s, [key]: value }));
+
+  const handleSave = () => {
+    localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+    setShowSaveModal(false);
+    setSaved(true);
+    setTimeout(() => setSaved(false), 3000);
+  };
+
+  const handlePasswordChange = () => {
+    if (!pwd.current) { setPwdError("Mot de passe actuel requis"); return; }
+    if (pwd.next.length < 8 || !/[A-Z]/.test(pwd.next) || !/[0-9]/.test(pwd.next)) {
+      setPwdError("8 caractères min, 1 majuscule, 1 chiffre"); return;
+    }
+    if (pwd.next !== pwd.confirm) { setPwdError("Les mots de passe ne correspondent pas"); return; }
+    setPwdError("");
+    setShowPasswordModal(false);
+    setPwd({ current: "", next: "", confirm: "" });
+  };
 
   return (
     <div className="space-y-6">
@@ -42,8 +84,8 @@ export default function ParametresPage() {
           <Button variant="outline" className="gap-2 text-gray-600" onClick={() => setShowPasswordModal(true)}>
             <Lock className="h-4 w-4" /> Changer le Mot de Passe
           </Button>
-          <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2" onClick={() => setShowSaveModal(true)}>
-            <Save className="h-4 w-4" /> Enregistrer
+          <Button className={`gap-2 text-white ${saved ? "bg-emerald-700" : "bg-emerald-500 hover:bg-emerald-600"}`} onClick={() => setShowSaveModal(true)}>
+            <Save className="h-4 w-4" /> {saved ? "Enregistré ✓" : "Enregistrer"}
           </Button>
         </div>
       </div>
@@ -61,11 +103,11 @@ export default function ParametresPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Nom de la Plateforme</label>
-                  <input defaultValue="Lambdata" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                  <input value={settings.platformName} onChange={(e) => set("platformName", e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Langue par Défaut</label>
-                  <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                  <select value={settings.language} onChange={(e) => set("language", e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <option>Français</option><option>English</option>
                   </select>
                 </div>
@@ -73,13 +115,13 @@ export default function ParametresPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Fuseau Horaire</label>
-                  <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                  <select value={settings.timezone} onChange={(e) => set("timezone", e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <option>Africa/Dakar (GMT+0)</option><option>Africa/Bamako (GMT+0)</option><option>Africa/Abidjan (GMT+0)</option>
                   </select>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Devise</label>
-                  <input defaultValue="XOF (Franc CFA)" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                  <input value={settings.currency} onChange={(e) => set("currency", e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                 </div>
               </div>
             </div>
@@ -93,18 +135,18 @@ export default function ParametresPage() {
             </div>
             <div className="space-y-3">
               {[
-                { label: "Nouvelles demandes de paiement", desc: "Recevoir une alerte quand un contributeur demande un retrait", checked: true },
-                { label: "Contributions signalées", desc: "Notification lorsqu'une contribution est marquée comme signalée", checked: true },
-                { label: "Export terminé", desc: "Alerter quand un export de corpus est prêt", checked: true },
-                { label: "Rapport hebdomadaire", desc: "Recevoir un récapitulatif chaque lundi", checked: false },
+                { label: "Nouvelles demandes de paiement", desc: "Recevoir une alerte quand un contributeur demande un retrait", key: "notifPayments" as const },
+                { label: "Contributions signalées", desc: "Notification lorsqu'une contribution est marquée comme signalée", key: "notifFlagged" as const },
+                { label: "Export terminé", desc: "Alerter quand un export de corpus est prêt", key: "notifExport" as const },
+                { label: "Rapport hebdomadaire", desc: "Recevoir un récapitulatif chaque lundi", key: "notifWeekly" as const },
               ].map((n) => (
-                <div key={n.label} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
+                <div key={n.key} className="flex items-center justify-between py-2 border-b border-gray-100 last:border-0">
                   <div>
                     <p className="text-sm font-medium text-gray-800">{n.label}</p>
                     <p className="text-xs text-gray-500">{n.desc}</p>
                   </div>
                   <label className="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" defaultChecked={n.checked} className="sr-only peer" />
+                    <input type="checkbox" checked={settings[n.key] as boolean} onChange={(e) => set(n.key, e.target.checked)} className="sr-only peer" />
                     <div className="w-9 h-5 bg-gray-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
                   </label>
                 </div>
@@ -122,24 +164,24 @@ export default function ParametresPage() {
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Seuil de Consensus</label>
-                  <input defaultValue="0.70" type="number" step="0.05" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                  <input value={settings.consensus} onChange={(e) => set("consensus", e.target.value)} type="number" step="0.05" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                   <p className="text-[10px] text-gray-400 mt-1">Pourcentage minimum de votes positifs pour valider</p>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Score Qualité Minimum</label>
-                  <input defaultValue="0.60" type="number" step="0.05" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                  <input value={settings.qualityScore} onChange={(e) => set("qualityScore", e.target.value)} type="number" step="0.05" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                   <p className="text-[10px] text-gray-400 mt-1">Score en dessous duquel une contribution est signalée</p>
                 </div>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Nombre Minimum de Reviews</label>
-                  <input defaultValue="3" type="number" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                  <input value={settings.minReviews} onChange={(e) => set("minReviews", e.target.value)} type="number" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                   <p className="text-[10px] text-gray-400 mt-1">Reviews communautaires avant décision</p>
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Limite de Signalement</label>
-                  <input defaultValue="2" type="number" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                  <input value={settings.flagLimit} onChange={(e) => set("flagLimit", e.target.value)} type="number" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
                   <p className="text-[10px] text-gray-400 mt-1">Signalements avant flag automatique</p>
                 </div>
               </div>
@@ -167,11 +209,11 @@ export default function ParametresPage() {
             <div className="space-y-3">
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Nom Complet</label>
-                <input defaultValue="Mody Barry" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                <input value={settings.adminName} onChange={(e) => set("adminName", e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Email</label>
-                <input defaultValue="modybarry50@gmail.com" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                <input value={settings.adminEmail} onChange={(e) => set("adminEmail", e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               </div>
             </div>
           </div>
@@ -214,18 +256,18 @@ export default function ParametresPage() {
             <div className="space-y-3">
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Email</label>
-                <input defaultValue="support@lambdata.ai" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                <input value={settings.supportEmail} onChange={(e) => set("supportEmail", e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Serveur Discord</label>
-                <input defaultValue="discord.gg/lambdata" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                <input value={settings.discord} onChange={(e) => set("discord", e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               </div>
             </div>
           </div>
 
           {/* Save */}
-          <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white gap-2" onClick={() => setShowSaveModal(true)}>
-            <Save className="h-4 w-4" /> Enregistrer les Modifications
+          <Button className={`w-full gap-2 text-white ${saved ? "bg-emerald-700" : "bg-emerald-500 hover:bg-emerald-600"}`} onClick={() => setShowSaveModal(true)}>
+            <Save className="h-4 w-4" /> {saved ? "Enregistré ✓" : "Enregistrer les Modifications"}
           </Button>
         </div>
       </div>
@@ -254,7 +296,7 @@ export default function ParametresPage() {
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowSaveModal(false)}>Annuler</Button>
-            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={() => setShowSaveModal(false)}>
+            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={handleSave}>
               <Save className="h-4 w-4" /> Enregistrer
             </Button>
           </DialogFooter>
@@ -274,21 +316,22 @@ export default function ParametresPage() {
           <div className="space-y-4 py-2">
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Mot de Passe Actuel</label>
-              <input type="password" placeholder="••••••••" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              <input type="password" placeholder="••••••••" value={pwd.current} onChange={(e) => setPwd(p => ({ ...p, current: e.target.value }))} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Nouveau Mot de Passe</label>
-              <input type="password" placeholder="••••••••" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              <input type="password" placeholder="••••••••" value={pwd.next} onChange={(e) => setPwd(p => ({ ...p, next: e.target.value }))} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               <p className="text-[10px] text-gray-400 mt-1">Minimum 8 caractères, 1 majuscule, 1 chiffre</p>
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Confirmer le Mot de Passe</label>
-              <input type="password" placeholder="••••••••" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              <input type="password" placeholder="••••••••" value={pwd.confirm} onChange={(e) => setPwd(p => ({ ...p, confirm: e.target.value }))} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
             </div>
+            {pwdError && <p className="text-xs text-red-600 font-medium">{pwdError}</p>}
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowPasswordModal(false)}>Annuler</Button>
-            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={() => setShowPasswordModal(false)}>
+            <Button variant="outline" onClick={() => { setShowPasswordModal(false); setPwdError(""); }}>Annuler</Button>
+            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={handlePasswordChange}>
               <Lock className="h-4 w-4" /> Mettre à Jour
             </Button>
           </DialogFooter>

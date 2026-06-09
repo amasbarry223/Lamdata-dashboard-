@@ -24,7 +24,7 @@ import {
 } from "@/components/ui/dialog";
 import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
-const recentExports = [
+const initialExports = [
   { id: "EXP-012", type: "Audio", format: "ZIP + JSON", language: "Wolof", records: 12840, score: "> 0.8", date: "Mai 14, 2024", size: "2.4 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "12 min" },
   { id: "EXP-011", type: "Traduction", format: "CSV", language: "Bambara", records: 9650, score: "> 0.7", date: "Mai 12, 2024", size: "45 MB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "3 min" },
   { id: "EXP-010", type: "Image", format: "ZIP + JSON", language: "Dioula", records: 7230, score: "> 0.75", date: "Mai 10, 2024", size: "5.1 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "25 min" },
@@ -39,26 +39,99 @@ const recentExports = [
   { id: "EXP-001", type: "Image", format: "ZIP + JSON", language: "Malinké", records: 15000, score: "> 0.5", date: "Mai 01, 2024", size: "6.3 GB", status: "Terminé", statusColor: "bg-emerald-100 text-emerald-700", duration: "35 min" },
 ];
 
+type ExportEntry = (typeof initialExports)[0] & { blob?: string };
+
 export default function ExportPage() {
+  const [exports, setExports] = useState<ExportEntry[]>(initialExports);
   const [showExportModal, setShowExportModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [selectedExport, setSelectedExport] = useState<(typeof recentExports)[0] | null>(null);
+  const [selectedExport, setSelectedExport] = useState<ExportEntry | null>(null);
+  const [exportConfig, setExportConfig] = useState({ type: "Tous les Types", language: "Toutes les Langues", score: "> 0.5", format: "JSON" });
+  const [exportName, setExportName] = useState(`lambdata-export-${new Date().toISOString().slice(0, 10)}`);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
-  const totalPages = Math.ceil(recentExports.length / pageSize);
-  const paginatedExports = recentExports.slice(
+  const totalPages = Math.ceil(exports.length / pageSize);
+  const paginatedExports = exports.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
 
-  const openDetail = (e: (typeof recentExports)[0]) => {
+  const openDetail = (e: ExportEntry) => {
     setSelectedExport(e);
     setShowDetailModal(true);
   };
 
   const startExport = () => {
     setShowExportModal(true);
+  };
+
+  const handleExport = () => {
+    // Sample corpus data (represents validated contributions)
+    const sampleData = Array.from({ length: 42 }, (_, i) => ({
+      id: `CONT-${5000 + i}`,
+      phrase: `Phrase exemple ${i + 1}`,
+      traduction: `Traduction exemple ${i + 1}`,
+      langue: exportConfig.language === "Toutes les Langues" ? ["Wolof", "Bambara", "Dioula", "Pulaar"][i % 4] : exportConfig.language,
+      type: exportConfig.type === "Tous les Types" ? ["Audio", "Traduction", "Image"][i % 3] : exportConfig.type,
+      score_qualite: (0.75 + Math.random() * 0.25).toFixed(2),
+      statut: "Validé",
+      date_validation: new Date(Date.now() - i * 86400000).toISOString().slice(0, 10),
+    }));
+
+    let content: string;
+    let mimeType: string;
+    let ext: string;
+
+    if (exportConfig.format === "CSV") {
+      const headers = Object.keys(sampleData[0]).join(",");
+      const rows = sampleData.map((r) => Object.values(r).join(","));
+      content = [headers, ...rows].join("\n");
+      mimeType = "text/csv";
+      ext = "csv";
+    } else {
+      content = JSON.stringify(sampleData, null, 2);
+      mimeType = "application/json";
+      ext = "json";
+    }
+
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${exportName}.${ext}`;
+    a.click();
+    URL.revokeObjectURL(url);
+
+    const newEntry: ExportEntry = {
+      id: `EXP-${String(exports.length + 1).padStart(3, "0")}`,
+      type: exportConfig.type === "Tous les Types" ? "Tous" : exportConfig.type,
+      format: exportConfig.format,
+      language: exportConfig.language === "Toutes les Langues" ? "Toutes" : exportConfig.language,
+      records: sampleData.length,
+      score: exportConfig.score,
+      date: new Date().toLocaleDateString("fr-FR", { day: "numeric", month: "short", year: "numeric" }),
+      size: `${(content.length / 1024).toFixed(0)} KB`,
+      status: "Terminé",
+      statusColor: "bg-emerald-100 text-emerald-700",
+      duration: "< 1 s",
+      blob: content,
+    };
+    setExports((prev) => [newEntry, ...prev]);
+    setShowExportModal(false);
+  };
+
+  const handleDownload = (entry: ExportEntry) => {
+    if (!entry.blob) return;
+    const ext = entry.format === "CSV" ? "csv" : "json";
+    const mimeType = entry.format === "CSV" ? "text/csv" : "application/json";
+    const blob = new Blob([entry.blob], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `${entry.id}.${ext}`;
+    a.click();
+    URL.revokeObjectURL(url);
   };
 
   return (
@@ -81,26 +154,26 @@ export default function ExportPage() {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Type de Contribution</label>
-            <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" value={exportConfig.type} onChange={(e) => setExportConfig(c => ({ ...c, type: e.target.value }))}>
               <option>Tous les Types</option><option>Audio</option><option>Traduction</option><option>Image</option>
             </select>
           </div>
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Langue Cible</label>
-            <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" value={exportConfig.language} onChange={(e) => setExportConfig(c => ({ ...c, language: e.target.value }))}>
               <option>Toutes les Langues</option><option>Wolof</option><option>Bambara</option><option>Dioula</option><option>Pulaar</option><option>Soninké</option><option>Malinké</option>
             </select>
           </div>
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Score Qualité Min.</label>
-            <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+            <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" value={exportConfig.score} onChange={(e) => setExportConfig(c => ({ ...c, score: e.target.value }))}>
               <option>{"> 0.5"}</option><option>{"> 0.6"}</option><option>{"> 0.7"}</option><option>{"> 0.8"}</option><option>{"> 0.9"}</option>
             </select>
           </div>
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Format d&apos;Export</label>
-            <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-              <option>Auto (recommandé)</option><option>CSV</option><option>JSON</option><option>ZIP + JSON</option>
+            <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" value={exportConfig.format} onChange={(e) => setExportConfig(c => ({ ...c, format: e.target.value }))}>
+              <option>CSV</option><option>JSON</option>
             </select>
           </div>
         </div>
@@ -181,7 +254,7 @@ export default function ExportPage() {
         <DataTablePagination
           currentPage={currentPage}
           totalPages={totalPages}
-          totalItems={recentExports.length}
+          totalItems={exports.length}
           pageSize={pageSize}
           onPageChange={setCurrentPage}
           onPageSizeChange={(size) => { setPageSize(size); setCurrentPage(1); }}
@@ -204,42 +277,33 @@ export default function ExportPage() {
             <div className="bg-gray-50 rounded-lg p-4 border border-gray-100 space-y-2.5">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Type</span>
-                <span className="font-medium text-gray-800">Tous les Types</span>
+                <span className="font-medium text-gray-800">{exportConfig.type}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Langue</span>
-                <span className="font-medium text-gray-800">Toutes les Langues</span>
+                <span className="font-medium text-gray-800">{exportConfig.language}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Score Minimum</span>
-                <span className="font-medium text-gray-800">&gt; 0.5</span>
+                <span className="font-medium text-gray-800">{exportConfig.score}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-500">Format</span>
-                <span className="font-medium text-gray-800">Auto (recommandé)</span>
+                <span className="font-medium text-gray-800">{exportConfig.format}</span>
               </div>
               <div className="border-t border-gray-200 pt-2.5 flex justify-between text-sm">
                 <span className="font-semibold text-gray-700">Contributions éligibles</span>
-                <span className="font-bold text-emerald-600">38,730</span>
-              </div>
-            </div>
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
-              <div className="flex items-start gap-2">
-                <Loader2 className="h-4 w-4 text-amber-600 mt-0.5 flex-shrink-0" />
-                <div>
-                  <p className="text-xs font-semibold text-amber-700">Durée estimée</p>
-                  <p className="text-xs text-amber-600">L&apos;export peut prendre entre 5 et 30 minutes selon le volume. Vous recevrez une notification à la fin.</p>
-                </div>
+                <span className="font-bold text-emerald-600">42</span>
               </div>
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Nom de l&apos;Export</label>
-              <input defaultValue="lambdata-export-2024-05" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              <input value={exportName} onChange={(e) => setExportName(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowExportModal(false)}>Annuler</Button>
-            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={() => setShowExportModal(false)}>
+            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={handleExport}>
               <Play className="h-4 w-4" /> Lancer l&apos;Export
             </Button>
           </DialogFooter>
@@ -306,7 +370,7 @@ export default function ExportPage() {
                   </div>
                 )}
                 {selectedExport.status === "Terminé" && (
-                  <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white gap-2">
+                  <Button className="w-full bg-emerald-500 hover:bg-emerald-600 text-white gap-2" disabled={"blob" in selectedExport ? !selectedExport.blob : true} onClick={() => handleDownload(selectedExport)}>
                     <Download className="h-4 w-4" /> Télécharger le Fichier
                   </Button>
                 )}

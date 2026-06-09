@@ -5,14 +5,10 @@ import {
   Search,
   Filter,
   Eye,
-  MoreVertical,
   AlertTriangle,
   ShieldCheck,
   CheckCircle2,
   XCircle,
-  MessageSquare,
-  Clock,
-  User,
 } from "lucide-react";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
@@ -27,7 +23,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
-const contributions = [
+const initialContributions = [
   { id: "CONT-4872", contributor: "Fatou Ndiaye", type: "Audio", language: "Wolof", date: "Mai 15, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.65, flagReason: "Qualité audio médiocre", avatar: "FN", avatarColor: "bg-blue-100 text-blue-700", detail: "Enregistrement avec beaucoup de bruit de fond. La phrase est partiellement audible." },
   { id: "CONT-4871", contributor: "Moussa Traoré", type: "Traduction", language: "Bambara", date: "Mai 15, 2024", status: "En Revue", statusColor: "bg-yellow-100 text-yellow-700", score: 0.72, flagReason: "Traduction approximative", avatar: "MT", avatarColor: "bg-orange-100 text-orange-700", detail: "La traduction ne capture pas complètement le sens de la phrase source." },
   { id: "CONT-4870", contributor: "Aissatou Ba", type: "Image", language: "Dioula", date: "Mai 14, 2024", status: "Signalé", statusColor: "bg-red-100 text-red-700", score: 0.58, flagReason: "Annotation incorrecte", avatar: "AB", avatarColor: "bg-purple-100 text-purple-700", detail: "Les étiquettes appliquées à l'image ne correspondent pas au contenu visible." },
@@ -56,10 +52,14 @@ const contributions = [
 ];
 
 export default function ModerationPage() {
+  const [contributions, setContributions] = useState(initialContributions);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showApproveModal, setShowApproveModal] = useState(false);
   const [showRejectModal, setShowRejectModal] = useState(false);
-  const [selectedContribution, setSelectedContribution] = useState<(typeof contributions)[0] | null>(null);
+  const [selectedContribution, setSelectedContribution] = useState<(typeof initialContributions)[0] | null>(null);
+  const [approveComment, setApproveComment] = useState("");
+  const [rejectReason, setRejectReason] = useState("Qualité insuffisante");
+  const [rejectComment, setRejectComment] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
@@ -69,22 +69,51 @@ export default function ModerationPage() {
     currentPage * pageSize
   );
 
-  const openDetail = (c: (typeof contributions)[0]) => {
+  const openDetail = (c: (typeof initialContributions)[0]) => {
     setSelectedContribution(c);
     setShowDetailModal(true);
   };
 
-  const openApprove = (c: (typeof contributions)[0]) => {
+  const openApprove = (c: (typeof initialContributions)[0]) => {
     setSelectedContribution(c);
+    setApproveComment("");
     setShowApproveModal(true);
   };
 
-  const openReject = (c: (typeof contributions)[0]) => {
+  const openReject = (c: (typeof initialContributions)[0]) => {
     setSelectedContribution(c);
+    setRejectReason("Qualité insuffisante");
+    setRejectComment("");
     setShowRejectModal(true);
   };
 
+  const handleApprove = () => {
+    if (!selectedContribution) return;
+    setContributions((prev) =>
+      prev.map((c) =>
+        c.id === selectedContribution.id
+          ? { ...c, status: "Approuvé", statusColor: "bg-emerald-100 text-emerald-700" }
+          : c
+      )
+    );
+    setShowApproveModal(false);
+  };
+
+  const handleReject = () => {
+    if (!selectedContribution) return;
+    setContributions((prev) =>
+      prev.map((c) =>
+        c.id === selectedContribution.id
+          ? { ...c, status: "Rejeté", statusColor: "bg-gray-100 text-gray-600" }
+          : c
+      )
+    );
+    setShowRejectModal(false);
+  };
+
   const signaleCount = contributions.filter((c) => c.status === "Signalé").length;
+  const enRevueCount = contributions.filter((c) => c.status === "En Revue").length;
+  const resolusCount = contributions.filter((c) => c.status === "Approuvé" || c.status === "Rejeté").length;
 
   return (
     <div className="space-y-6">
@@ -110,14 +139,14 @@ export default function ModerationPage() {
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex items-center gap-4">
           <div className="h-10 w-10 bg-yellow-100 rounded-full flex items-center justify-center"><Eye className="h-5 w-5 text-yellow-600" /></div>
           <div>
-            <p className="text-2xl font-bold text-yellow-700">23</p>
+            <p className="text-2xl font-bold text-yellow-700">{enRevueCount}</p>
             <p className="text-xs text-yellow-600">En Attente de Revue</p>
           </div>
         </div>
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-4">
           <div className="h-10 w-10 bg-emerald-100 rounded-full flex items-center justify-center"><ShieldCheck className="h-5 w-5 text-emerald-600" /></div>
           <div>
-            <p className="text-2xl font-bold text-emerald-700">156</p>
+            <p className="text-2xl font-bold text-emerald-700">{resolusCount}</p>
             <p className="text-xs text-emerald-600">Résolues ce mois</p>
           </div>
         </div>
@@ -278,12 +307,12 @@ export default function ModerationPage() {
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Commentaire (optionnel)</label>
-                  <Textarea rows={3} placeholder="Ajoutez un commentaire pour le contributeur..." className="resize-none" />
+                  <Textarea rows={3} placeholder="Ajoutez un commentaire pour le contributeur..." className="resize-none" value={approveComment} onChange={(e) => setApproveComment(e.target.value)} />
                 </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowApproveModal(false)}>Annuler</Button>
-                <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={() => setShowApproveModal(false)}>
+                <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-1.5" onClick={handleApprove}>
                   <CheckCircle2 className="h-4 w-4" /> Confirmer l&apos;Approbation
                 </Button>
               </DialogFooter>
@@ -312,7 +341,7 @@ export default function ModerationPage() {
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Raison du Rejet</label>
-                  <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                  <select value={rejectReason} onChange={(e) => setRejectReason(e.target.value)} className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
                     <option>Qualité insuffisante</option>
                     <option>Contenu inapproprié</option>
                     <option>Doublon détecté</option>
@@ -322,12 +351,12 @@ export default function ModerationPage() {
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Commentaire pour le contributeur</label>
-                  <Textarea rows={3} placeholder="Expliquez pourquoi cette contribution est rejetée..." className="resize-none" />
+                  <Textarea rows={3} placeholder="Expliquez pourquoi cette contribution est rejetée..." className="resize-none" value={rejectComment} onChange={(e) => setRejectComment(e.target.value)} />
                 </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowRejectModal(false)}>Annuler</Button>
-                <Button className="bg-red-500 hover:bg-red-600 text-white gap-1.5" onClick={() => setShowRejectModal(false)}>
+                <Button className="bg-red-500 hover:bg-red-600 text-white gap-1.5" onClick={handleReject}>
                   <XCircle className="h-4 w-4" /> Confirmer le Rejet
                 </Button>
               </DialogFooter>

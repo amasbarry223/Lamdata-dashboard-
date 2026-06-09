@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 import {
   Upload,
   Search,
@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/dialog";
 import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
-const phrases = [
+const initialPhrases = [
   { id: "PHR-00456", text: "Naka nga def sa alal?", translation: "Comment vas-tu ce matin?", language: "Wolof", type: "Audio", theme: "Santé", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 23, avatar: "WO", createdDate: "Mai 10, 2024", campaign: "CAMP-001" },
   { id: "PHR-00455", text: "I cɛ la bɛnɛ n'o tɔgɔ?", translation: "Comment t'appelles-tu?", language: "Bambara", type: "Traduction", theme: "Agriculture", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 18, avatar: "BA", createdDate: "Mai 09, 2024", campaign: "CAMP-002" },
   { id: "PHR-00454", text: "A yɛ kɛɛ i wuliɛ?", translation: "Qu'est-ce que tu fais?", language: "Dioula", type: "Audio", theme: "Vie Quotidienne", status: "Inactif", statusColor: "bg-gray-100 text-gray-600", submissions: 12, avatar: "DI", createdDate: "Mai 08, 2024", campaign: "CAMP-003" },
@@ -66,20 +66,121 @@ const phrases = [
   { id: "PHR-00421", text: "N kɛnɛ bɛ ka janɛ dɔgɔtɔrɔ?", translation: "Le médecin est très compétent", language: "Malinké", type: "Audio", theme: "Santé", status: "Actif", statusColor: "bg-emerald-100 text-emerald-700", submissions: 34, avatar: "ML", createdDate: "Avr 01, 2024", campaign: "CAMP-001" },
 ];
 
+type Phrase = (typeof initialPhrases)[0];
+
 export default function PhrasesPage() {
+  const [phrases, setPhrases] = useState<Phrase[]>(initialPhrases);
   const [showAddModal, setShowAddModal] = useState(false);
   const [showImportModal, setShowImportModal] = useState(false);
   const [showDetailModal, setShowDetailModal] = useState(false);
-  const [selectedPhrase, setSelectedPhrase] = useState<(typeof phrases)[0] | null>(null);
+  const [selectedPhrase, setSelectedPhrase] = useState<Phrase | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
+
+  // Add form state
+  const [newPhrase, setNewPhrase] = useState({ text: "", translation: "", language: "Wolof", type: "Audio", theme: "Santé", campaign: "Aucune" });
+
+  // Import state
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [importFile, setImportFile] = useState<File | null>(null);
+  const [importPreview, setImportPreview] = useState<{ count: number; error?: string } | null>(null);
+  const [importCampaign, setImportCampaign] = useState("Aucune");
 
   const totalPages = Math.ceil(phrases.length / pageSize);
   const paginatedPhrases = phrases.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const openDetail = (p: (typeof phrases)[0]) => {
+  const openDetail = (p: Phrase) => {
     setSelectedPhrase(p);
     setShowDetailModal(true);
+  };
+
+  const handleAddPhrase = () => {
+    if (!newPhrase.text.trim()) return;
+    const id = `PHR-${String(Math.max(...phrases.map(p => parseInt(p.id.split("-")[1]))) + 1).padStart(5, "0")}`;
+    const langAbbr: Record<string, string> = { Wolof: "WO", Bambara: "BA", Dioula: "DI", Pulaar: "PU", Soninké: "SO", Malinké: "ML" };
+    setPhrases((prev) => [{
+      id,
+      text: newPhrase.text,
+      translation: newPhrase.translation,
+      language: newPhrase.language,
+      type: newPhrase.type,
+      theme: newPhrase.theme,
+      status: "Actif",
+      statusColor: "bg-emerald-100 text-emerald-700",
+      submissions: 0,
+      avatar: langAbbr[newPhrase.language] ?? newPhrase.language.slice(0, 2).toUpperCase(),
+      createdDate: new Date().toLocaleDateString("fr-FR", { year: "numeric", month: "short", day: "numeric" }),
+      campaign: newPhrase.campaign === "Aucune" ? "—" : newPhrase.campaign,
+    }, ...prev]);
+    setNewPhrase({ text: "", translation: "", language: "Wolof", type: "Audio", theme: "Santé", campaign: "Aucune" });
+    setShowAddModal(false);
+  };
+
+  const handleDeletePhrase = (id: string) => {
+    setPhrases((prev) => prev.filter((p) => p.id !== id));
+    setShowDetailModal(false);
+  };
+
+  const parseCSV = (text: string): Record<string, string>[] => {
+    const lines = text.split(/\r?\n/).filter((l) => l.trim());
+    if (lines.length < 2) return [];
+    const headers = lines[0].split(",").map((h) => h.trim().replace(/^"|"$/g, "").toLowerCase());
+    return lines.slice(1).map((line) => {
+      const values = line.split(",").map((v) => v.trim().replace(/^"|"$/g, ""));
+      return Object.fromEntries(headers.map((h, i) => [h, values[i] ?? ""]));
+    });
+  };
+
+  const handleFileChange = (file: File) => {
+    setImportFile(file);
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      try {
+        const rows = file.name.endsWith(".json") ? JSON.parse(text) : parseCSV(text);
+        setImportPreview({ count: Array.isArray(rows) ? rows.length : 0 });
+      } catch {
+        setImportPreview({ count: 0, error: "Fichier invalide ou mal formaté" });
+      }
+    };
+    reader.readAsText(file);
+  };
+
+  const handleImport = () => {
+    if (!importFile) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const text = e.target?.result as string;
+      try {
+        const rows: Record<string, string>[] = importFile.name.endsWith(".json") ? JSON.parse(text) : parseCSV(text);
+        const langAbbr: Record<string, string> = { Wolof: "WO", Bambara: "BA", Dioula: "DI", Pulaar: "PU", Soninké: "SO", Malinké: "ML" };
+        const base = Math.max(...phrases.map((p) => parseInt(p.id.split("-")[1])));
+        const imported: Phrase[] = rows.map((row, i) => {
+          const lang = row.langue ?? row.language ?? "Wolof";
+          return {
+            id: `PHR-${String(base + i + 1).padStart(5, "0")}`,
+            text: row.phrase ?? row.text ?? "",
+            translation: row.traduction ?? row.translation ?? "",
+            language: lang,
+            type: (row.type ?? "Audio") as "Audio" | "Traduction",
+            theme: row.thematique ?? row.theme ?? "Santé",
+            status: "Actif",
+            statusColor: "bg-emerald-100 text-emerald-700",
+            submissions: 0,
+            avatar: langAbbr[lang] ?? lang.slice(0, 2).toUpperCase(),
+            createdDate: new Date().toLocaleDateString("fr-FR", { year: "numeric", month: "short", day: "numeric" }),
+            campaign: importCampaign === "Aucune" ? "—" : importCampaign,
+          };
+        });
+        setPhrases((prev) => [...imported, ...prev]);
+        setImportFile(null);
+        setImportPreview(null);
+        setShowImportModal(false);
+      } catch {
+        setImportPreview({ count: 0, error: "Erreur lors de l'import" });
+      }
+    };
+    reader.readAsText(importFile);
   };
 
   return (
@@ -161,7 +262,7 @@ export default function PhrasesPage() {
                   <div className="flex items-center gap-1">
                     <button className="p-1 rounded hover:bg-gray-100" onClick={() => openDetail(p)}><Eye className="h-4 w-4 text-gray-400" /></button>
                     <button className="p-1 rounded hover:bg-gray-100"><Pencil className="h-4 w-4 text-gray-400" /></button>
-                    <button className="p-1 rounded hover:bg-gray-100"><Trash2 className="h-4 w-4 text-gray-400" /></button>
+                    <button className="p-1 rounded hover:bg-gray-100" onClick={() => handleDeletePhrase(p.id)}><Trash2 className="h-4 w-4 text-red-400" /></button>
                   </div>
                 </td>
               </tr>
@@ -191,22 +292,22 @@ export default function PhrasesPage() {
           <div className="space-y-4 py-2">
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Phrase Originale</label>
-              <textarea rows={3} placeholder="Entrez la phrase dans la langue source..." className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none" />
+              <textarea rows={3} placeholder="Entrez la phrase dans la langue source..." className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500 resize-none" value={newPhrase.text} onChange={(e) => setNewPhrase(p => ({ ...p, text: e.target.value }))} />
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Traduction Française</label>
-              <input placeholder="Traduction en français..." className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+              <input placeholder="Traduction en français..." className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" value={newPhrase.translation} onChange={(e) => setNewPhrase(p => ({ ...p, translation: e.target.value }))} />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Langue</label>
-                <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                  <option>Wolof</option><option>Bambara</option><option>Dioula</option><option>Pulaar</option>
+                <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" value={newPhrase.language} onChange={(e) => setNewPhrase(p => ({ ...p, language: e.target.value }))}>
+                  <option>Wolof</option><option>Bambara</option><option>Dioula</option><option>Pulaar</option><option>Soninké</option><option>Malinké</option>
                 </select>
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Type de Collecte</label>
-                <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
+                <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" value={newPhrase.type} onChange={(e) => setNewPhrase(p => ({ ...p, type: e.target.value }))}>
                   <option>Audio</option><option>Traduction</option>
                 </select>
               </div>
@@ -214,21 +315,21 @@ export default function PhrasesPage() {
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Thématique</label>
-                <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                  <option>Santé</option><option>Agriculture</option><option>Éducation</option><option>Finance</option><option>Commerce</option>
+                <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" value={newPhrase.theme} onChange={(e) => setNewPhrase(p => ({ ...p, theme: e.target.value }))}>
+                  <option>Santé</option><option>Agriculture</option><option>Éducation</option><option>Finance</option><option>Commerce</option><option>Vie Quotidienne</option>
                 </select>
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Campagne Associée</label>
-                <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                  <option>Aucune</option><option>CAMP-001</option><option>CAMP-002</option><option>CAMP-003</option>
+                <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" value={newPhrase.campaign} onChange={(e) => setNewPhrase(p => ({ ...p, campaign: e.target.value }))}>
+                  <option>Aucune</option><option>CAMP-001</option><option>CAMP-002</option><option>CAMP-003</option><option>CAMP-004</option><option>CAMP-005</option><option>CAMP-006</option>
                 </select>
               </div>
             </div>
           </div>
           <DialogFooter>
             <Button variant="outline" onClick={() => setShowAddModal(false)}>Annuler</Button>
-            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white" onClick={() => setShowAddModal(false)}>Ajouter la Phrase</Button>
+            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white" disabled={!newPhrase.text.trim()} onClick={handleAddPhrase}>Ajouter la Phrase</Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
@@ -241,12 +342,29 @@ export default function PhrasesPage() {
             <DialogDescription>Importez un fichier CSV ou JSON contenant vos phrases sources</DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-2">
-            <div className="bg-white border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:border-emerald-400 transition-colors">
+            <input ref={fileInputRef} type="file" accept=".csv,.json" className="hidden" onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFileChange(f); }} />
+            <div
+              className={`bg-white border-2 border-dashed rounded-xl p-6 text-center transition-colors cursor-pointer ${importFile ? "border-emerald-400 bg-emerald-50" : "border-gray-300 hover:border-emerald-400"}`}
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={(e) => { e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) handleFileChange(f); }}
+            >
               <Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-              <p className="text-sm font-medium text-gray-700 mb-1">Glissez-déposez votre fichier ici</p>
-              <p className="text-xs text-gray-500">CSV ou JSON — Max 10 MB</p>
-              <Button variant="outline" size="sm" className="text-emerald-600 border-emerald-300 mt-3">Parcourir</Button>
+              {importFile ? (
+                <p className="text-sm font-medium text-emerald-700">{importFile.name}</p>
+              ) : (
+                <>
+                  <p className="text-sm font-medium text-gray-700 mb-1">Glissez-déposez votre fichier ici</p>
+                  <p className="text-xs text-gray-500">CSV ou JSON — Max 10 MB</p>
+                </>
+              )}
+              <Button variant="outline" size="sm" className="text-emerald-600 border-emerald-300 mt-3" onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}>Parcourir</Button>
             </div>
+            {importPreview && (
+              <div className={`rounded-lg p-3 border text-sm ${importPreview.error ? "bg-red-50 border-red-200 text-red-700" : "bg-emerald-50 border-emerald-200 text-emerald-700"}`}>
+                {importPreview.error ? `⚠ ${importPreview.error}` : `✓ ${importPreview.count} phrase(s) détectée(s) — prêtes à importer`}
+              </div>
+            )}
             <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
               <p className="text-xs font-semibold text-gray-700 mb-1.5">Format attendu :</p>
               <p className="text-[11px] text-gray-500 mb-1"><strong>CSV :</strong> colonnes — phrase, traduction, langue, thématique, type</p>
@@ -254,14 +372,14 @@ export default function PhrasesPage() {
             </div>
             <div>
               <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Campagne Destination</label>
-              <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
-                <option>Aucune (phrases orphelines)</option><option>CAMP-001</option><option>CAMP-002</option><option>CAMP-003</option>
+              <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" value={importCampaign} onChange={(e) => setImportCampaign(e.target.value)}>
+                <option value="Aucune">Aucune (phrases orphelines)</option><option>CAMP-001</option><option>CAMP-002</option><option>CAMP-003</option><option>CAMP-004</option><option>CAMP-005</option><option>CAMP-006</option>
               </select>
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setShowImportModal(false)}>Annuler</Button>
-            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2" onClick={() => setShowImportModal(false)}>
+            <Button variant="outline" onClick={() => { setShowImportModal(false); setImportFile(null); setImportPreview(null); }}>Annuler</Button>
+            <Button className="bg-emerald-500 hover:bg-emerald-600 text-white gap-2" disabled={!importFile || !!importPreview?.error} onClick={handleImport}>
               <Upload className="h-4 w-4" /> Lancer l&apos;Import
             </Button>
           </DialogFooter>
@@ -313,7 +431,7 @@ export default function PhrasesPage() {
                 <Button variant="outline" className="gap-1.5" onClick={() => setShowDetailModal(false)}>
                   <Pencil className="h-3.5 w-3.5" /> Modifier
                 </Button>
-                <Button className="bg-red-500 hover:bg-red-600 text-white gap-1.5" onClick={() => setShowDetailModal(false)}>
+                <Button className="bg-red-500 hover:bg-red-600 text-white gap-1.5" onClick={() => selectedPhrase && handleDeletePhrase(selectedPhrase.id)}>
                   <Trash2 className="h-3.5 w-3.5" /> Supprimer
                 </Button>
               </DialogFooter>

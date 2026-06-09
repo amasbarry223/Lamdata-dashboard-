@@ -26,7 +26,7 @@ import {
 import { Textarea } from "@/components/ui/textarea";
 import { DataTablePagination } from "@/components/dashboard/data-table-pagination";
 
-const reviews = [
+const initialReviews = [
   { id: "CONT-4880", contributor: "Fatou Ndiaye", type: "Audio", language: "Wolof", yesVotes: 8, noVotes: 1, totalVotes: 9, consensus: "Approuvé", consensusColor: "bg-emerald-100 text-emerald-700", avatar: "FN", avatarColor: "bg-blue-100 text-blue-700", phrase: "Naka nga def sa alal?", comments: ["Bonne prononciation", "Audio clair", "Phrase correcte"] },
   { id: "CONT-4879", contributor: "Moussa Traoré", type: "Traduction", language: "Bambara", yesVotes: 5, noVotes: 5, totalVotes: 10, consensus: "Partagé", consensusColor: "bg-yellow-100 text-yellow-700", avatar: "MT", avatarColor: "bg-orange-100 text-orange-700", phrase: "I cɛ la bɛnɛ n'o tɔgɔ?", comments: ["Traduction partielle", "Manque de contexte", "Sens ambigu"] },
   { id: "CONT-4878", contributor: "Aissatou Ba", type: "Image", language: "Dioula", yesVotes: 2, noVotes: 7, totalVotes: 9, consensus: "Rejeté", consensusColor: "bg-red-100 text-red-700", avatar: "AB", avatarColor: "bg-purple-100 text-purple-700", phrase: "Image du marché", comments: ["Annotation incorrecte", "Tags non pertinents", "Qualité médiocre"] },
@@ -50,23 +50,47 @@ const reviews = [
 ];
 
 export default function ConsensusPage() {
+  const [reviews, setReviews] = useState(initialReviews);
   const [showDetailModal, setShowDetailModal] = useState(false);
   const [showArbitrateModal, setShowArbitrateModal] = useState(false);
-  const [selectedReview, setSelectedReview] = useState<(typeof reviews)[0] | null>(null);
+  const [selectedReview, setSelectedReview] = useState<(typeof initialReviews)[0] | null>(null);
+  const [arbitrateDecision, setArbitrateDecision] = useState<"Approuver" | "Rejeter" | null>(null);
+  const [justification, setJustification] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
 
   const totalPages = Math.ceil(reviews.length / pageSize);
   const paginatedReviews = reviews.slice((currentPage - 1) * pageSize, currentPage * pageSize);
 
-  const openDetail = (r: (typeof reviews)[0]) => {
+  const openDetail = (r: (typeof initialReviews)[0]) => {
     setSelectedReview(r);
     setShowDetailModal(true);
   };
 
-  const openArbitrate = (r: (typeof reviews)[0]) => {
+  const openArbitrate = (r: (typeof initialReviews)[0]) => {
     setSelectedReview(r);
+    setArbitrateDecision(null);
+    setJustification("");
     setShowArbitrateModal(true);
+  };
+
+  const handleArbitrate = () => {
+    if (!selectedReview || !arbitrateDecision) return;
+    setReviews((prev) =>
+      prev.map((r) =>
+        r.id === selectedReview.id
+          ? {
+              ...r,
+              consensus: arbitrateDecision === "Approuver" ? "Approuvé" : "Rejeté",
+              consensusColor:
+                arbitrateDecision === "Approuver"
+                  ? "bg-emerald-100 text-emerald-700"
+                  : "bg-red-100 text-red-700",
+            }
+          : r
+      )
+    );
+    setShowArbitrateModal(false);
   };
 
   return (
@@ -83,15 +107,15 @@ export default function ConsensusPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-4">
           <CheckCircle2 className="h-8 w-8 text-emerald-600" />
-          <div><p className="text-2xl font-bold text-emerald-700">32,156</p><p className="text-xs text-emerald-600">Approuvées par Consensus</p></div>
+          <div><p className="text-2xl font-bold text-emerald-700">{reviews.filter(r => r.consensus === "Approuvé").length}</p><p className="text-xs text-emerald-600">Approuvées par Consensus</p></div>
         </div>
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-4">
           <XCircle className="h-8 w-8 text-red-500" />
-          <div><p className="text-2xl font-bold text-red-700">2,847</p><p className="text-xs text-red-600">Rejetées par Consensus</p></div>
+          <div><p className="text-2xl font-bold text-red-700">{reviews.filter(r => r.consensus === "Rejeté").length}</p><p className="text-xs text-red-600">Rejetées par Consensus</p></div>
         </div>
         <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4 flex items-center gap-4">
           <Minus className="h-8 w-8 text-yellow-600" />
-          <div><p className="text-2xl font-bold text-yellow-700">1,234</p><p className="text-xs text-yellow-600">Votes Partagés</p></div>
+          <div><p className="text-2xl font-bold text-yellow-700">{reviews.filter(r => r.consensus === "Partagé").length}</p><p className="text-xs text-yellow-600">Votes Partagés</p></div>
         </div>
         <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 flex items-center gap-4">
           <ThumbsUp className="h-8 w-8 text-blue-600" />
@@ -261,12 +285,12 @@ export default function ConsensusPage() {
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Votre Décision</label>
                   <div className="grid grid-cols-2 gap-3">
-                    <button className="border-2 border-emerald-200 rounded-lg p-4 text-center hover:bg-emerald-50 transition-colors group">
+                    <button onClick={() => setArbitrateDecision("Approuver")} className={`border-2 rounded-lg p-4 text-center transition-colors group ${arbitrateDecision === "Approuver" ? "border-emerald-500 bg-emerald-50" : "border-emerald-200 hover:bg-emerald-50"}`}>
                       <CheckCircle2 className="h-8 w-8 text-emerald-500 mx-auto mb-1 group-hover:scale-110 transition-transform" />
                       <p className="text-sm font-semibold text-emerald-700">Approuver</p>
                       <p className="text-[10px] text-emerald-600">Valider la contribution</p>
                     </button>
-                    <button className="border-2 border-red-200 rounded-lg p-4 text-center hover:bg-red-50 transition-colors group">
+                    <button onClick={() => setArbitrateDecision("Rejeter")} className={`border-2 rounded-lg p-4 text-center transition-colors group ${arbitrateDecision === "Rejeter" ? "border-red-500 bg-red-50" : "border-red-200 hover:bg-red-50"}`}>
                       <XCircle className="h-8 w-8 text-red-500 mx-auto mb-1 group-hover:scale-110 transition-transform" />
                       <p className="text-sm font-semibold text-red-700">Rejeter</p>
                       <p className="text-[10px] text-red-600">Invalider la contribution</p>
@@ -275,12 +299,12 @@ export default function ConsensusPage() {
                 </div>
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Justification</label>
-                  <Textarea rows={3} placeholder="Expliquez votre décision..." className="resize-none" />
+                  <Textarea rows={3} placeholder="Expliquez votre décision..." className="resize-none" value={justification} onChange={(e) => setJustification(e.target.value)} />
                 </div>
               </div>
               <DialogFooter>
                 <Button variant="outline" onClick={() => setShowArbitrateModal(false)}>Annuler</Button>
-                <Button className="bg-amber-500 hover:bg-amber-600 text-white gap-1.5" onClick={() => setShowArbitrateModal(false)}>
+                <Button className="bg-amber-500 hover:bg-amber-600 text-white gap-1.5" disabled={!arbitrateDecision} onClick={handleArbitrate}>
                   <Gavel className="h-4 w-4" /> Confirmer la Décision
                 </Button>
               </DialogFooter>
