@@ -10,10 +10,10 @@ export function Header() {
       {/* Left - Title */}
       <div>
         <h1 className="text-xl font-semibold text-gray-800">
-          Expense Approval Dashboard
+          Dashboard Administrateur
         </h1>
         <p className="text-[13px] text-gray-500">
-          Welcome back, Olivia Rhye 👋
+          Bienvenue, Amadou Diallo 👋
         </p>
       </div>
 
@@ -23,7 +23,7 @@ export function Header() {
         <div className="relative">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <Input
-            placeholder="Search for requests, employees, or departments..."
+            placeholder="Rechercher campagnes, contributeurs, langues..."
             className="pl-9 w-80 h-9 text-sm bg-gray-50 border-gray-200"
           />
         </div>
@@ -32,24 +32,24 @@ export function Header() {
         <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
           <Bell className="h-5 w-5 text-gray-600" />
           <span className="absolute -top-0.5 -right-0.5 h-4 w-4 bg-emerald-500 rounded-full text-[10px] text-white font-bold flex items-center justify-center">
-            3
+            5
           </span>
         </button>
 
         {/* User Profile */}
         <div className="flex items-center gap-2.5 pl-2 border-l border-gray-200 ml-1">
           <Avatar className="h-8 w-8">
-            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Olivia" />
+            <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Amadou" />
             <AvatarFallback className="bg-emerald-100 text-emerald-700 text-xs font-semibold">
-              OR
+              AD
             </AvatarFallback>
           </Avatar>
           <div className="flex flex-col">
             <span className="text-sm font-medium text-gray-800 leading-tight">
-              Olivia Rhye
+              Amadou Diallo
             </span>
             <span className="text-xs text-gray-500 leading-tight">
-              Finance Manager
+              Admin Principal
             </span>
           </div>
           <ChevronDown className="h-4 w-4 text-gray-400" />

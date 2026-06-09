@@ -3,24 +3,26 @@
 import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
 
 const data = [
-  { name: "Approved", value: 55, color: "#10B981" },
-  { name: "Pending", value: 32, color: "#F59E0B" },
-  { name: "In Review", value: 28, color: "#14B8A6" },
-  { name: "Rejected", value: 13, color: "#EF4444" },
+  { name: "Wolof", value: 12840, color: "#10B981" },
+  { name: "Bambara", value: 9650, color: "#F59E0B" },
+  { name: "Dioula", value: 7230, color: "#14B8A6" },
+  { name: "Pulaar", value: 5890, color: "#8B5CF6" },
+  { name: "Autres", value: 3120, color: "#EF4444" },
 ];
 
 const legendItems = [
-  { label: "Pending", value: 32, percent: 25, color: "#F59E0B" },
-  { label: "In Review", value: 28, percent: 22, color: "#14B8A6" },
-  { label: "Approved", value: 55, percent: 43, color: "#10B981" },
-  { label: "Rejected", value: 13, percent: 10, color: "#EF4444" },
+  { label: "Wolof", value: 12840, percent: 35, color: "#10B981" },
+  { label: "Bambara", value: 9650, percent: 26, color: "#F59E0B" },
+  { label: "Dioula", value: 7230, percent: 20, color: "#14B8A6" },
+  { label: "Pulaar", value: 5890, percent: 10, color: "#8B5CF6" },
+  { label: "Autres", value: 3120, percent: 9, color: "#EF4444" },
 ];
 
 export function RequestsStatusChart() {
   return (
     <div className="bg-white border border-gray-200 rounded-xl p-5">
       <h3 className="text-base font-semibold text-gray-800 mb-5">
-        Requests by Status
+        Distribution Linguistique
       </h3>
       <div className="flex items-center gap-6">
         {/* Donut Chart */}
@@ -45,13 +47,13 @@ export function RequestsStatusChart() {
           </ResponsiveContainer>
           {/* Center text */}
           <div className="absolute inset-0 flex flex-col items-center justify-center">
-            <span className="text-2xl font-bold text-gray-800">128</span>
-            <span className="text-xs text-gray-500">Total</span>
+            <span className="text-2xl font-bold text-gray-800">38.7K</span>
+            <span className="text-xs text-gray-500">Phrases</span>
           </div>
         </div>
 
         {/* Legend */}
-        <div className="flex-1 space-y-3">
+        <div className="flex-1 space-y-2.5">
           {legendItems.map((item) => (
             <div key={item.label} className="flex items-center justify-between">
               <div className="flex items-center gap-2">
@@ -63,7 +65,7 @@ export function RequestsStatusChart() {
               </div>
               <div className="flex items-center gap-2">
                 <span className="text-sm font-semibold text-gray-800">
-                  {item.value}
+                  {item.value.toLocaleString()}
                 </span>
                 <span className="text-xs text-gray-400">
                   ({item.percent}%)

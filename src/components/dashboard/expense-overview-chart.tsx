@@ -12,11 +12,15 @@ import {
 import { ChevronDown } from "lucide-react";
 
 const data = [
-  { date: "May 01", amount: 8000 },
-  { date: "May 08", amount: 18500 },
-  { date: "May 15", amount: 18750 },
-  { date: "May 22", amount: 28000 },
-  { date: "May 29", amount: 32000 },
+  { date: "Jan 01", contributions: 1200 },
+  { date: "Jan 15", contributions: 2850 },
+  { date: "Fév 01", contributions: 3200 },
+  { date: "Fév 15", contributions: 4100 },
+  { date: "Mar 01", contributions: 3800 },
+  { date: "Mar 15", contributions: 5200 },
+  { date: "Avr 01", contributions: 4900 },
+  { date: "Avr 15", contributions: 6100 },
+  { date: "Mai 01", contributions: 5800 },
 ];
 
 export function ExpenseOverviewChart() {
@@ -24,10 +28,10 @@ export function ExpenseOverviewChart() {
     <div className="bg-white border border-gray-200 rounded-xl p-5">
       <div className="flex items-center justify-between mb-5">
         <h3 className="text-base font-semibold text-gray-800">
-          Expense Overview
+          Évolution des Contributions
         </h3>
         <button className="flex items-center gap-1 text-sm text-gray-500 border border-gray-200 rounded-lg px-3 py-1.5 hover:bg-gray-50 transition-colors">
-          This Month
+          Ce Trimestre
           <ChevronDown className="h-3.5 w-3.5" />
         </button>
       </div>
@@ -37,15 +41,15 @@ export function ExpenseOverviewChart() {
             <CartesianGrid strokeDasharray="3 3" stroke="#F3F4F6" />
             <XAxis
               dataKey="date"
-              tick={{ fontSize: 12, fill: "#6B7280" }}
+              tick={{ fontSize: 11, fill: "#6B7280" }}
               axisLine={{ stroke: "#E5E7EB" }}
               tickLine={false}
             />
             <YAxis
-              tick={{ fontSize: 12, fill: "#6B7280" }}
+              tick={{ fontSize: 11, fill: "#6B7280" }}
               axisLine={{ stroke: "#E5E7EB" }}
               tickLine={false}
-              tickFormatter={(value) => `$${value / 1000}K`}
+              tickFormatter={(value) => `${(value / 1000).toFixed(0)}K`}
             />
             <Tooltip
               contentStyle={{
@@ -56,14 +60,14 @@ export function ExpenseOverviewChart() {
                 boxShadow: "0 2px 8px rgba(0,0,0,0.08)",
               }}
               formatter={(value: number) => [
-                `$${value.toLocaleString()}.00`,
-                "Amount",
+                `${value.toLocaleString()} contributions`,
+                "Total",
               ]}
               labelStyle={{ color: "#374151", fontWeight: 600 }}
             />
             <Line
               type="monotone"
-              dataKey="amount"
+              dataKey="contributions"
               stroke="#10B981"
               strokeWidth={2.5}
               dot={{ r: 4, fill: "#10B981", strokeWidth: 2, stroke: "white" }}
