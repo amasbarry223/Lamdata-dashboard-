@@ -132,7 +132,7 @@ export function LoginPage() {
   const footer = (
     <div className="px-8 py-4 bg-gray-50/50 border-t border-gray-100 text-center">
       <p className="text-[11px] text-gray-400">
-        © 2024 Lambdata. Plateforme de données linguistiques pour l&apos;IA.
+        © 2026 Lambdata. Plateforme de données linguistiques pour l&apos;IA.
       </p>
     </div>
   );
