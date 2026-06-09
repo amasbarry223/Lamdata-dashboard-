@@ -15,21 +15,24 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { useNavigation, type PageKey } from "@/lib/navigation";
 
-const navItems = [
-  { icon: LayoutDashboard, label: "Tableau de Bord", active: true },
-  { icon: Megaphone, label: "Campagnes", active: false },
-  { icon: FileText, label: "Phrases Sources", active: false },
-  { icon: Image, label: "Images", active: false },
-  { icon: ShieldCheck, label: "Modération", active: false },
-  { icon: ThumbsUp, label: "Consensus", active: false },
-  { icon: Gift, label: "Récompenses", active: false },
-  { icon: Wallet, label: "Paiements", active: false },
-  { icon: Download, label: "Export Corpus", active: false },
-  { icon: Settings, label: "Paramètres", active: false },
+const navItems: { icon: typeof LayoutDashboard; label: string; key: PageKey }[] = [
+  { icon: LayoutDashboard, label: "Tableau de Bord", key: "dashboard" },
+  { icon: Megaphone, label: "Campagnes", key: "campagnes" },
+  { icon: FileText, label: "Phrases Sources", key: "phrases" },
+  { icon: Image, label: "Images", key: "images" },
+  { icon: ShieldCheck, label: "Modération", key: "moderation" },
+  { icon: ThumbsUp, label: "Consensus", key: "consensus" },
+  { icon: Gift, label: "Récompenses", key: "recompenses" },
+  { icon: Wallet, label: "Paiements", key: "paiements" },
+  { icon: Download, label: "Export Corpus", key: "export" },
+  { icon: Settings, label: "Paramètres", key: "parametres" },
 ];
 
 export function Sidebar() {
+  const { activePage, setActivePage } = useNavigation();
+
   return (
     <aside className="w-60 min-w-60 bg-white border-r border-gray-200 flex flex-col h-full">
       {/* Logo */}
@@ -47,10 +50,11 @@ export function Sidebar() {
         <div className="space-y-0.5">
           {navItems.map((item) => (
             <button
-              key={item.label}
+              key={item.key}
+              onClick={() => setActivePage(item.key)}
               className={cn(
                 "w-full flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors",
-                item.active
+                activePage === item.key
                   ? "bg-emerald-500 text-white"
                   : "text-gray-600 hover:bg-gray-100"
               )}

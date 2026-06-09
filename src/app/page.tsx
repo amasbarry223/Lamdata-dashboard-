@@ -8,51 +8,80 @@ import { RequestsStatusChart } from "@/components/dashboard/requests-status-char
 import { RecentRequests } from "@/components/dashboard/recent-requests";
 import { PendingApprovalsTable } from "@/components/dashboard/pending-approvals-table";
 import { ApprovalWorkflow } from "@/components/dashboard/approval-workflow";
+import { useNavigation } from "@/lib/navigation";
+
+import CampagnesPage from "@/components/dashboard/pages/campagnes";
+import PhrasesPage from "@/components/dashboard/pages/phrases";
+import ImagesPage from "@/components/dashboard/pages/images";
+import ModerationPage from "@/components/dashboard/pages/moderation";
+import ConsensusPage from "@/components/dashboard/pages/consensus";
+import RecompensesPage from "@/components/dashboard/pages/recompenses";
+import PaiementsPage from "@/components/dashboard/pages/paiements";
+import ExportPage from "@/components/dashboard/pages/export";
+import ParametresPage from "@/components/dashboard/pages/parametres";
+
+function DashboardPage() {
+  return (
+    <div className="space-y-6">
+      <StatsCards />
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-8 grid grid-cols-2 gap-6">
+          <ExpenseOverviewChart />
+          <RequestsStatusChart />
+        </div>
+        <div className="col-span-4">
+          <RecentRequests />
+        </div>
+      </div>
+      <div className="grid grid-cols-12 gap-6">
+        <div className="col-span-8">
+          <PendingApprovalsTable />
+        </div>
+        <div className="col-span-4">
+          <ApprovalWorkflow />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PageRenderer() {
+  const { activePage } = useNavigation();
+
+  switch (activePage) {
+    case "dashboard":
+      return <DashboardPage />;
+    case "campagnes":
+      return <CampagnesPage />;
+    case "phrases":
+      return <PhrasesPage />;
+    case "images":
+      return <ImagesPage />;
+    case "moderation":
+      return <ModerationPage />;
+    case "consensus":
+      return <ConsensusPage />;
+    case "recompenses":
+      return <RecompensesPage />;
+    case "paiements":
+      return <PaiementsPage />;
+    case "export":
+      return <ExportPage />;
+    case "parametres":
+      return <ParametresPage />;
+    default:
+      return <DashboardPage />;
+  }
+}
 
 export default function Home() {
   return (
     <div className="flex h-screen bg-gray-50 overflow-hidden">
-      {/* Sidebar */}
       <Sidebar />
-
-      {/* Main Content */}
       <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
-        {/* Header */}
         <Header />
-
-        {/* Content */}
         <main className="flex-1 overflow-y-auto p-6">
-          <div className="space-y-6">
-            {/* Stats Cards */}
-            <StatsCards />
-
-            {/* Charts + Recent Requests Row */}
-            <div className="grid grid-cols-12 gap-6">
-              {/* Charts */}
-              <div className="col-span-8 grid grid-cols-2 gap-6">
-                <ExpenseOverviewChart />
-                <RequestsStatusChart />
-              </div>
-
-              {/* Recent Requests */}
-              <div className="col-span-4">
-                <RecentRequests />
-              </div>
-            </div>
-
-            {/* Table + Workflow Row */}
-            <div className="grid grid-cols-12 gap-6">
-              {/* Pending Approvals Table */}
-              <div className="col-span-8">
-                <PendingApprovalsTable />
-              </div>
-
-              {/* Approval Workflow */}
-              <div className="col-span-4">
-                <ApprovalWorkflow />
-              </div>
-            </div>
-          </div>
+          <PageRenderer />
         </main>
       </div>
     </div>
