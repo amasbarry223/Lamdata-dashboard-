@@ -16,18 +16,18 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Lambdata - Dashboard Administrateur",
   description: "Dashboard Administrateur Lambdata - Pilotage des campagnes de collecte, modération des contributions et gestion des paiements.",
-  keywords: ["Z.ai", "Next.js", "TypeScript", "Tailwind CSS", "shadcn/ui", "AI development", "React"],
-  authors: [{ name: "Z.ai Team" }],
+  keywords: ["Lambdata", "dashboard", "collecte", "contributions", "paiements", "administration"],
+  authors: [{ name: "Lambdata" }],
   openGraph: {
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
-    siteName: "Z.ai",
+    title: "Lambdata - Dashboard Administrateur",
+    description: "Dashboard Administrateur Lambdata - Pilotage des campagnes de collecte, modération des contributions et gestion des paiements.",
+    siteName: "Lambdata",
     type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Z.ai Code Scaffold",
-    description: "AI-powered development with modern React stack",
+    title: "Lambdata - Dashboard Administrateur",
+    description: "Dashboard Administrateur Lambdata - Pilotage des campagnes de collecte, modération des contributions et gestion des paiements.",
   },
 };
 
