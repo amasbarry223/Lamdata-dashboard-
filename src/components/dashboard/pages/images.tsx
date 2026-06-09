@@ -65,12 +65,12 @@ export default function ImagesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold text-gray-800">Gestion des Images</h2>
           <p className="text-sm text-gray-500 mt-1">Téléversez les images de référence pour les campagnes de labellisation</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" className="gap-2 text-gray-600" onClick={() => setShowAddModal(true)}>
             <Upload className="h-4 w-4" /> Importer en Masse
           </Button>
@@ -89,8 +89,8 @@ export default function ImagesPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 w-full sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input placeholder="Rechercher une image..." className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
         </div>
@@ -99,7 +99,7 @@ export default function ImagesPage() {
       </div>
 
       {/* Image Grid */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {paginatedImages.map((img) => (
           <div key={img.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-md transition-shadow">
             <div className="h-40 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center relative cursor-pointer" onClick={() => openDetail(img)}>

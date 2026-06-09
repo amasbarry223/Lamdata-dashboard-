@@ -12,6 +12,7 @@ import {
   Download,
   Settings,
   HelpCircle,
+  X,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -31,18 +32,28 @@ const navItems: { icon: typeof LayoutDashboard; label: string; key: PageKey }[] 
 ];
 
 export function Sidebar() {
-  const { activePage, setActivePage } = useNavigation();
+  const { activePage, setActivePage, sidebarOpen, setSidebarOpen } =
+    useNavigation();
 
-  return (
-    <aside className="w-60 min-w-60 bg-white border-r border-gray-200 flex flex-col h-full">
+  const navContent = (
+    <>
       {/* Logo */}
-      <div className="px-5 py-4 flex items-center gap-2.5 border-b border-gray-200">
-        <div className="w-7 h-7 bg-emerald-500 rounded-md flex items-center justify-center">
-          <span className="text-white font-bold text-sm">L</span>
+      <div className="px-5 py-4 flex items-center justify-between border-b border-gray-200">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 bg-emerald-500 rounded-md flex items-center justify-center">
+            <span className="text-white font-bold text-sm">L</span>
+          </div>
+          <span className="text-gray-800 font-semibold text-base">
+            Lambdata
+          </span>
         </div>
-        <span className="text-gray-800 font-semibold text-base">
-          Lambdata
-        </span>
+        {/* Close button - mobile only */}
+        <button
+          className="lg:hidden p-1 rounded-lg hover:bg-gray-100 transition-colors"
+          onClick={() => setSidebarOpen(false)}
+        >
+          <X className="h-5 w-5 text-gray-500" />
+        </button>
       </div>
 
       {/* Navigation */}
@@ -59,7 +70,7 @@ export function Sidebar() {
                   : "text-gray-600 hover:bg-gray-100"
               )}
             >
-              <item.icon className="h-4 w-4" />
+              <item.icon className="h-4 w-4 flex-shrink-0" />
               {item.label}
             </button>
           ))}
@@ -83,6 +94,33 @@ export function Sidebar() {
           </Button>
         </div>
       </div>
-    </aside>
+    </>
+  );
+
+  return (
+    <>
+      {/* Mobile overlay backdrop */}
+      {sidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/40 z-40 lg:hidden transition-opacity"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
+      {/* Mobile sidebar - drawer from left */}
+      <aside
+        className={cn(
+          "fixed inset-y-0 left-0 z-50 w-60 bg-white border-r border-gray-200 flex flex-col transition-transform duration-300 ease-in-out lg:hidden",
+          sidebarOpen ? "translate-x-0" : "-translate-x-full"
+        )}
+      >
+        {navContent}
+      </aside>
+
+      {/* Desktop sidebar - always visible */}
+      <aside className="hidden lg:flex w-60 min-w-60 bg-white border-r border-gray-200 flex-col h-full">
+        {navContent}
+      </aside>
+    </>
   );
 }

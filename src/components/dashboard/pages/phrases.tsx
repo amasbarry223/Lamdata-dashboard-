@@ -84,12 +84,12 @@ export default function PhrasesPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div>
           <h2 className="text-xl font-semibold text-gray-800">Phrases Sources</h2>
           <p className="text-sm text-gray-500 mt-1">Importez et gérez les phrases pour la collecte vocale et la traduction</p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" className="gap-2 text-gray-600" onClick={() => setShowImportModal(true)}>
             <Upload className="h-4 w-4" /> Importer CSV/JSON
           </Button>
@@ -100,7 +100,7 @@ export default function PhrasesPage() {
       </div>
 
       {/* Import Zone */}
-      <div className="bg-white border-2 border-dashed border-gray-300 rounded-xl p-8 text-center hover:border-emerald-400 transition-colors cursor-pointer" onClick={() => setShowImportModal(true)}>
+      <div className="bg-white border-2 border-dashed border-gray-300 rounded-xl p-4 sm:p-8 text-center hover:border-emerald-400 transition-colors cursor-pointer" onClick={() => setShowImportModal(true)}>
         <Upload className="h-10 w-10 text-gray-400 mx-auto mb-3" />
         <p className="text-sm font-medium text-gray-700 mb-1">Glissez-déposez votre fichier CSV ou JSON ici</p>
         <p className="text-xs text-gray-500 mb-3">Format attendu : colonnes phrase, langue, thématique, type</p>
@@ -110,8 +110,8 @@ export default function PhrasesPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 w-full sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input placeholder="Rechercher une phrase..." className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
         </div>
@@ -122,6 +122,7 @@ export default function PhrasesPage() {
 
       {/* Table */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
@@ -167,6 +168,7 @@ export default function PhrasesPage() {
             ))}
           </tbody>
         </table>
+        </div>
         <DataTablePagination
           currentPage={currentPage}
           totalPages={totalPages}

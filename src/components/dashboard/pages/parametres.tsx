@@ -30,7 +30,7 @@ export default function ParametresPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
           <Settings className="h-6 w-6 text-emerald-600" />
           <div>
@@ -38,7 +38,7 @@ export default function ParametresPage() {
             <p className="text-sm text-gray-500 mt-1">Configurez les préférences de la plateforme</p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex flex-wrap items-center gap-2">
           <Button variant="outline" className="gap-2 text-gray-600" onClick={() => setShowPasswordModal(true)}>
             <Lock className="h-4 w-4" /> Changer le Mot de Passe
           </Button>
@@ -48,9 +48,9 @@ export default function ParametresPage() {
         </div>
       </div>
 
-      <div className="grid grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Left column - General */}
-        <div className="col-span-2 space-y-6">
+        <div className="lg:col-span-2 space-y-6">
           {/* General */}
           <div className="bg-white border border-gray-200 rounded-xl p-5">
             <div className="flex items-center gap-2 mb-4">
@@ -58,7 +58,7 @@ export default function ParametresPage() {
               <h3 className="text-base font-semibold text-gray-800">Général</h3>
             </div>
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Nom de la Plateforme</label>
                   <input defaultValue="Lambdata" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
@@ -70,7 +70,7 @@ export default function ParametresPage() {
                   </select>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Fuseau Horaire</label>
                   <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
@@ -119,7 +119,7 @@ export default function ParametresPage() {
               <h3 className="text-base font-semibold text-gray-800">Sécurité & Modération</h3>
             </div>
             <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Seuil de Consensus</label>
                   <input defaultValue="0.70" type="number" step="0.05" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
@@ -131,7 +131,7 @@ export default function ParametresPage() {
                   <p className="text-[10px] text-gray-400 mt-1">Score en dessous duquel une contribution est signalée</p>
                 </div>
               </div>
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Nombre Minimum de Reviews</label>
                   <input defaultValue="3" type="number" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
@@ -157,21 +157,21 @@ export default function ParametresPage() {
             </div>
             <div className="flex items-center gap-3 mb-4">
               <div className="h-12 w-12 bg-emerald-100 rounded-full flex items-center justify-center">
-                <span className="text-emerald-700 font-bold">AD</span>
+                <span className="text-emerald-700 font-bold">MB</span>
               </div>
               <div>
-                <p className="text-sm font-semibold text-gray-800">Amadou Diallo</p>
-                <p className="text-xs text-gray-500">admin@lambdata.ai</p>
+                <p className="text-sm font-semibold text-gray-800">Mody Barry</p>
+                <p className="text-xs text-gray-500">modybarry50@gmail.com</p>
               </div>
             </div>
             <div className="space-y-3">
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Nom Complet</label>
-                <input defaultValue="Amadou Diallo" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                <input defaultValue="Mody Barry" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               </div>
               <div>
                 <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Email</label>
-                <input defaultValue="admin@lambdata.ai" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
+                <input defaultValue="modybarry50@gmail.com" className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
               </div>
             </div>
           </div>

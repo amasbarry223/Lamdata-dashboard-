@@ -80,7 +80,7 @@ export default function ConsensusPage() {
       </div>
 
       {/* Stats */}
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-4">
           <CheckCircle2 className="h-8 w-8 text-emerald-600" />
           <div><p className="text-2xl font-bold text-emerald-700">32,156</p><p className="text-xs text-emerald-600">Approuvées par Consensus</p></div>
@@ -100,8 +100,8 @@ export default function ConsensusPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 w-full sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input placeholder="Rechercher par ID ou contributeur..." className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
         </div>
@@ -111,6 +111,7 @@ export default function ConsensusPage() {
 
       {/* Table */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
@@ -157,6 +158,7 @@ export default function ConsensusPage() {
             ))}
           </tbody>
         </table>
+        </div>
         <DataTablePagination
           currentPage={currentPage}
           totalPages={totalPages}

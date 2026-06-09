@@ -78,7 +78,7 @@ export default function ExportPage() {
           <h3 className="text-base font-semibold text-gray-800">Moteur d&apos;Exportation</h3>
         </div>
 
-        <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div>
             <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">Type de Contribution</label>
             <select className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500">
@@ -105,7 +105,7 @@ export default function ExportPage() {
           </div>
         </div>
 
-        <div className="grid grid-cols-3 gap-3 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-6">
           <div className="bg-gray-50 rounded-lg p-3 border border-gray-100">
             <div className="flex items-center gap-2 mb-1.5">
               <FileSpreadsheet className="h-4 w-4 text-emerald-600" />
@@ -129,7 +129,7 @@ export default function ExportPage() {
           </div>
         </div>
 
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
           <div className="text-xs text-gray-500">
             <span className="font-semibold text-gray-700">38,730</span> contributions éligibles après filtrage
           </div>

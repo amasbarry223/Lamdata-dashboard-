@@ -21,7 +21,7 @@ const steps = [
     label: "Arbitrage Admin",
     completed: false,
     pending: true,
-    person: "Amadou Diallo",
+    person: "Mody Barry",
     detail: "Contribution signalée · Score 0.65",
   },
   {

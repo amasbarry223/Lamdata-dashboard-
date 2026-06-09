@@ -88,7 +88,7 @@ export default function ModerationPage() {
 
   return (
     <div className="space-y-6">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
         <div className="flex items-center gap-3">
           <ShieldCheck className="h-6 w-6 text-emerald-600" />
           <div>
@@ -99,7 +99,7 @@ export default function ModerationPage() {
       </div>
 
       {/* Alert Stats */}
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="bg-red-50 border border-red-200 rounded-xl p-4 flex items-center gap-4">
           <div className="h-10 w-10 bg-red-100 rounded-full flex items-center justify-center"><AlertTriangle className="h-5 w-5 text-red-500" /></div>
           <div>
@@ -124,8 +124,8 @@ export default function ModerationPage() {
       </div>
 
       {/* Filters */}
-      <div className="flex items-center gap-3">
-        <div className="relative flex-1 max-w-sm">
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="relative flex-1 w-full sm:max-w-sm">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
           <input placeholder="Rechercher par ID ou contributeur..." className="w-full pl-9 pr-4 py-2 text-sm border border-gray-200 rounded-lg bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500" />
         </div>
@@ -136,6 +136,7 @@ export default function ModerationPage() {
 
       {/* Table */}
       <div className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+        <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
             <tr className="border-b border-gray-200 bg-gray-50">
@@ -182,6 +183,7 @@ export default function ModerationPage() {
             ))}
           </tbody>
         </table>
+        </div>
         <DataTablePagination
           currentPage={currentPage}
           totalPages={totalPages}
@@ -200,7 +202,7 @@ export default function ModerationPage() {
           {selectedContribution && (
             <>
               <DialogHeader>
-                <div className="flex items-center justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
                   <DialogTitle>Détails de la Contribution</DialogTitle>
                   <span className={`text-[10px] font-semibold px-2.5 py-1 rounded-full ${selectedContribution.statusColor}`}>
                     {selectedContribution.status}

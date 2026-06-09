@@ -60,7 +60,7 @@ const stats = [
 
 export function StatsCards() {
   return (
-    <div className="grid grid-cols-5 gap-4">
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
       {stats.map((stat) => (
         <div
           key={stat.title}
@@ -68,7 +68,7 @@ export function StatsCards() {
         >
           <div className="flex items-center gap-3 mb-3">
             <div
-              className={`${stat.iconBg} w-9 h-9 rounded-full flex items-center justify-center`}
+              className={`${stat.iconBg} w-9 h-9 rounded-full flex items-center justify-center flex-shrink-0`}
             >
               <stat.icon className={`h-4 w-4 ${stat.iconColor}`} />
             </div>

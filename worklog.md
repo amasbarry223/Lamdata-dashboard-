@@ -108,3 +108,61 @@ Stage Summary:
 - Consistent emerald-500/600 theming across all modals
 - French labels and descriptions on every modal
 - No lint errors, no runtime errors
+
+---
+Task ID: 2-b
+Agent: responsive-agent
+Task: Make 3 dashboard page components responsive for all screen sizes
+
+Work Log:
+- Read worklog.md and all 3 target files (consensus.tsx, recompenses.tsx, moderation.tsx)
+- consensus.tsx: Changed stats grid from grid-cols-4 to grid-cols-1 sm:grid-cols-2 lg:grid-cols-4, added flex-wrap to filter row, changed search max-w-sm to w-full sm:max-w-sm, wrapped table in overflow-x-auto div
+- recompenses.tsx: Changed header from flex items-center justify-between to flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3, changed stats grid from grid-cols-4 to grid-cols-1 sm:grid-cols-2 lg:grid-cols-4, added flex-wrap to filter row, changed search max-w-sm to w-full sm:max-w-sm, wrapped table in overflow-x-auto div
+- moderation.tsx: Changed header from flex items-center justify-between to flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3, changed stats grid from grid-cols-3 to grid-cols-1 sm:grid-cols-3, added flex-wrap to filter row, changed search max-w-sm to w-full sm:max-w-sm, wrapped table in overflow-x-auto div
+- Lint passes cleanly with no errors
+
+Stage Summary:
+- All 3 dashboard pages (Consensus, Récompenses, Modération) now responsive
+- Mobile: headers stack vertically, stats grid collapses to single column, filter buttons wrap, search takes full width, tables scroll horizontally
+- Desktop: layouts remain as originally designed
+- No functionality or data changes — only Tailwind CSS class modifications
+- Zero lint errors
+
+---
+Task ID: 2-c
+Agent: responsive-agent
+Task: Make 3 dashboard page components responsive for all screen sizes (Paiements, Export, Paramètres)
+
+Work Log:
+- Read worklog.md and all 3 target files (paiements.tsx, export.tsx, parametres.tsx)
+- paiements.tsx: Header already had responsive classes from prior work. Changed filter row from flex items-center gap-3 to flex flex-wrap items-center gap-3, changed search from flex-1 max-w-sm to flex-1 w-full sm:max-w-sm, wrapped table in overflow-x-auto div
+- export.tsx: Changed export engine grid from grid-cols-4 to grid-cols-1 sm:grid-cols-2 lg:grid-cols-4, changed info cards grid from grid-cols-3 to grid-cols-1 sm:grid-cols-3, changed eligible contributions row from flex items-center justify-between to flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3
+- parametres.tsx: Changed header from flex items-center justify-between to flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3, changed header buttons from flex items-center gap-2 to flex flex-wrap items-center gap-2, changed main grid from grid-cols-3 to grid-cols-1 lg:grid-cols-3, changed left column from col-span-2 to lg:col-span-2, changed all 4 inner 2-column grids from grid-cols-2 to grid-cols-1 sm:grid-cols-2
+- Lint passes cleanly with no errors
+
+Stage Summary:
+- All 3 dashboard pages (Paiements, Export Corpus, Paramètres) now responsive
+- Mobile: headers stack vertically, grids collapse to single column, filter buttons wrap, search takes full width, tables scroll horizontally, settings form fields stack
+- Desktop: layouts remain as originally designed
+- No functionality or data changes — only Tailwind CSS class modifications
+- Zero lint errors
+
+---
+Task ID: 2-a
+Agent: responsive-agent
+Task: Make 4 dashboard page components responsive for all screen sizes (Campagnes, Phrases, Images, Modération)
+
+Work Log:
+- Read worklog.md and all 4 target files (campagnes.tsx, phrases.tsx, images.tsx, moderation.tsx)
+- campagnes.tsx: Changed header from flex items-center justify-between to flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3, changed stats grid from grid-cols-4 to grid-cols-1 sm:grid-cols-2 lg:grid-cols-4, added flex-wrap to filter row, changed search from flex-1 max-w-sm to flex-1 w-full sm:max-w-sm, changed card grid from grid-cols-3 to grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
+- phrases.tsx: Changed header from flex items-center justify-between to flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3, changed header buttons from flex items-center gap-2 to flex flex-wrap items-center gap-2, added responsive padding p-4 sm:p-8 to import zone, added flex-wrap to filter row, changed search from flex-1 max-w-sm to flex-1 w-full sm:max-w-sm, wrapped table in overflow-x-auto div
+- images.tsx: Changed header from flex items-center justify-between to flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3, changed header buttons from flex items-center gap-2 to flex flex-wrap items-center gap-2, added flex-wrap to filter row, changed search from flex-1 max-w-sm to flex-1 w-full sm:max-w-sm, changed image grid from grid-cols-3 to grid-cols-1 sm:grid-cols-2 lg:grid-cols-3
+- moderation.tsx: Header and stats grid already had responsive classes from prior agent (2-b). Filter row and search already responsive. Table already wrapped in overflow-x-auto. Verified all responsive classes are correct.
+- Lint passes cleanly with no errors
+
+Stage Summary:
+- All 4 dashboard pages (Campagnes, Phrases, Images, Modération) now responsive
+- Mobile: headers stack vertically, stats grids collapse to 1-2 columns, card/image grids collapse to 1-2 columns, filter buttons wrap, search takes full width, tables scroll horizontally
+- Desktop: layouts remain as originally designed
+- No functionality or data changes — only Tailwind CSS class modifications
+- Zero lint errors

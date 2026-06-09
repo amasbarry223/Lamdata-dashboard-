@@ -10,8 +10,7 @@ import {
   LogOut,
   Shield,
   HelpCircle,
-  Moon,
-  Sun,
+  Menu,
 } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
@@ -37,34 +36,48 @@ import { useNavigation } from "@/lib/navigation";
 import { useAuth } from "@/lib/auth";
 
 export function Header() {
-  const { setActivePage } = useNavigation();
+  const { setActivePage, toggleSidebar } = useNavigation();
   const { logout } = useAuth();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showLogoutModal, setShowLogoutModal] = useState(false);
 
   return (
     <>
-      <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-        {/* Left - Title */}
-        <div>
-          <h1 className="text-xl font-semibold text-gray-800">
-            Dashboard Administrateur
-          </h1>
-          <p className="text-[13px] text-gray-500">
-            Bienvenue, Amadou Diallo 👋
-          </p>
+      <header className="bg-white border-b border-gray-200 px-3 sm:px-6 py-3 flex items-center justify-between gap-3">
+        {/* Left - Hamburger + Title */}
+        <div className="flex items-center gap-3 min-w-0">
+          {/* Hamburger - mobile only */}
+          <button
+            className="lg:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors flex-shrink-0"
+            onClick={toggleSidebar}
+          >
+            <Menu className="h-5 w-5 text-gray-600" />
+          </button>
+          <div className="min-w-0">
+            <h1 className="text-base sm:text-xl font-semibold text-gray-800 truncate">
+              Dashboard Administrateur
+            </h1>
+            <p className="text-[11px] sm:text-[13px] text-gray-500 hidden sm:block">
+              Bienvenue, Mody Barry 👋
+            </p>
+          </div>
         </div>
 
         {/* Right - Search, Notification, Profile */}
-        <div className="flex items-center gap-4">
-          {/* Search */}
-          <div className="relative">
+        <div className="flex items-center gap-2 sm:gap-4 flex-shrink-0">
+          {/* Search - hidden on very small screens, compact on medium */}
+          <div className="relative hidden md:block">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
             <Input
               placeholder="Rechercher campagnes, contributeurs, langues..."
-              className="pl-9 w-80 h-9 text-sm bg-gray-50 border-gray-200"
+              className="pl-9 w-64 lg:w-80 h-9 text-sm bg-gray-50 border-gray-200"
             />
           </div>
+
+          {/* Mobile search button */}
+          <button className="md:hidden p-2 rounded-lg hover:bg-gray-100 transition-colors">
+            <Search className="h-5 w-5 text-gray-600" />
+          </button>
 
           {/* Notification */}
           <button className="relative p-2 rounded-lg hover:bg-gray-100 transition-colors">
@@ -77,23 +90,23 @@ export function Header() {
           {/* User Profile Dropdown */}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="flex items-center gap-2.5 pl-2 border-l border-gray-200 ml-1 hover:bg-gray-50 rounded-lg px-2 py-1.5 transition-colors">
-                <Avatar className="h-9 w-9 ring-2 ring-emerald-100">
-                  <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Amadou" />
+              <button className="flex items-center gap-1.5 sm:gap-2.5 pl-2 border-l border-gray-200 ml-1 hover:bg-gray-50 rounded-lg px-2 py-1.5 transition-colors">
+                <Avatar className="h-8 w-8 sm:h-9 sm:w-9 ring-2 ring-emerald-100">
+                  <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mody" />
                   <AvatarFallback className="bg-emerald-100 text-emerald-700 text-xs font-semibold">
-                    AD
+                    MB
                   </AvatarFallback>
                 </Avatar>
-                <div className="flex flex-col items-start">
+                <div className="flex-col items-start hidden sm:flex">
                   <span className="text-sm font-medium text-gray-800 leading-tight">
-                    Amadou Diallo
+                    Mody Barry
                   </span>
                   <span className="text-[11px] text-emerald-600 font-medium leading-tight flex items-center gap-1">
                     <Shield className="h-3 w-3" />
                     Admin Principal
                   </span>
                 </div>
-                <ChevronDown className="h-4 w-4 text-gray-400" />
+                <ChevronDown className="h-4 w-4 text-gray-400 hidden sm:block" />
               </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-64" align="end" forceMount>
@@ -101,17 +114,17 @@ export function Header() {
               <DropdownMenuLabel>
                 <div className="flex items-center gap-3 py-1">
                   <Avatar className="h-10 w-10 ring-2 ring-emerald-200">
-                    <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Amadou" />
+                    <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mody" />
                     <AvatarFallback className="bg-emerald-100 text-emerald-700 text-sm font-semibold">
-                      AD
+                      MB
                     </AvatarFallback>
                   </Avatar>
                   <div className="flex flex-col">
                     <span className="text-sm font-semibold text-gray-800">
-                      Amadou Diallo
+                      Mody Barry
                     </span>
                     <span className="text-xs text-gray-500">
-                      amadou.diallo@lambdata.com
+                      modybarry50@gmail.com
                     </span>
                   </div>
                 </div>
@@ -179,14 +192,14 @@ export function Header() {
             {/* Avatar & Name */}
             <div className="flex items-center gap-4">
               <Avatar className="h-16 w-16 ring-4 ring-emerald-100">
-                <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Amadou" />
+                <AvatarImage src="https://api.dicebear.com/7.x/avataaars/svg?seed=Mody" />
                 <AvatarFallback className="bg-emerald-100 text-emerald-700 text-xl font-semibold">
-                  AD
+                  MB
                 </AvatarFallback>
               </Avatar>
               <div>
                 <h3 className="text-lg font-bold text-gray-800">
-                  Amadou Diallo
+                  Mody Barry
                 </h3>
                 <div className="flex items-center gap-2 mt-0.5">
                   <Shield className="h-3.5 w-3.5 text-emerald-600" />
@@ -202,7 +215,7 @@ export function Header() {
 
             {/* Info Fields */}
             <div className="space-y-3">
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div>
                   <label className="text-xs font-semibold text-gray-500 uppercase block mb-1.5">
                     Prénom
@@ -227,7 +240,7 @@ export function Header() {
                   Email
                 </label>
                 <input
-                  defaultValue="amadou.diallo@lambdata.com"
+                  defaultValue="modybarry50@gmail.com"
                   className="w-full text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
                 />
               </div>

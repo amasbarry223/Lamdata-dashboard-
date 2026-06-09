@@ -21,10 +21,10 @@ export const useAuth = create<AuthState>((set) => ({
       set({
         isAuthenticated: true,
         user: {
-          name: "Amadou Diallo",
+          name: "Mody Barry",
           email: email,
           role: "Admin Principal",
-          avatar: "AD",
+          avatar: "MB",
         },
       });
       return true;
